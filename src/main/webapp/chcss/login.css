@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+html, body{ 
+	margin:0 auto; 
+	height:100%; 
+	width:100%; 
+	background-color:#2a3542;
+	/*
+	background-image:url(../chimage/login.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	*/
+}
+
+.logo_text div{
+	color: #ffffff;
+}
+
+input{
+	border:0;outline:none;/*input去除蓝色边框*/
+	border-radius:0.4em;/* 四角椭圆 */
+}
+
+.logo_text input{
+	width:200px;height:40px;font-size:18px;
+}
+
+.zhuce_dialog input{
+	width:200px;height:30px;font-size:14px;
+}
+/*登录页面布局*/
+.doc{
+	width:1200px;
+	height:100%;
+	margin:0 auto;
+}
+
+/*LOGO布局*/
+.logo_text{
+	width:300px;
+	height:220px;
+	
+	margin:0 auto;position: relative;top:25%;/* div居中 */
+	text-align:center;
+}
+
+

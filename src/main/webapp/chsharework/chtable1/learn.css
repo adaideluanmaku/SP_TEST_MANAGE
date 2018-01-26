@@ -1,0 +1,112 @@
+@CHARSET "UTF-8";
+html, body{ 
+	margin:0 auto; 
+	height:100%; 
+	width:100%; 
+	background-color:#ece8e8;
+	/*
+	background-image:url(../chimage/login.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	*/
+}
+
+
+/*==========查询部分========*/
+.tsearch{
+	height:25px;
+	width: 100%;
+	position: absolute;
+}
+
+.tsearch div{
+	float: left;
+}
+
+.search_text input{
+	height:20px;
+	width:200px;
+}
+
+.search_submit input{
+	height:26px;
+	width:100px;
+	cursor: pointer;
+}
+
+.search_insert input{
+	height:26px;
+	width:100px;
+	cursor: pointer;
+}
+
+/*----------表格样式-----*/
+.table_box{
+	height:225px;/*设置表格div高度，用来显示横向滚动条,高度在tfoot上一点*/
+	width:590px;/*设置表格宽度，TD宽度总和+20px*/
+	position: absolute;
+	top:40px;
+	background-color: #ff8080;
+	overflow-y: hidden;
+	overflow-x: auto;
+}
+
+.table_box .table{
+	width: 100%;
+	border-spacing:0;
+	background-color: #80ff00;
+	position: absolute;
+	overflow: auto;
+}
+
+.table_box .table .thead{
+	display: block;
+}
+.table_box .table .tbody{
+	display: block; 
+	height:200px;/*设置表格高度*/
+	border-spacing:0;
+	overflow: auto;
+	white-space: nowrap;
+}
+
+
+.table_box .thead th,.table_box .tbody td{
+	display: inline-block;
+	height:20px;
+	width:80px;
+	border-right: 1px solid #CCC;  
+    border-top: 1px solid #DDD;  
+    border-bottom: 1px solid #DDD; 
+    border-left: 1px solid #DDD; 
+    text-align: center;
+} 
+
+.table_box .table .tfoot{
+	width:600px;
+	display: block; 
+	position: fixed;
+	display: table-footer-group;
+    vertical-align: middle;
+    border-color: inherit;
+    background-color: darkgrey;
+}
+
+.table_box .tfoot td{
+	width:600px;
+	height:25;
+}
+
+.table_box .tfoot div{
+	float: left;
+}
+
+.table_box .tfoot .datamsg{
+	float: right;
+	padding-right: 0px;
+}
+
+.table_box .tfoot .datanum{
+	height: 13px;
+	width: 25px;
+}

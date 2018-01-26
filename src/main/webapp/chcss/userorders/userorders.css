@@ -1,0 +1,10 @@
+#orders-div p{
+	font-size: 15px;
+	text-align:center;
+	background-color: #ef89ce;
+}
+
+#orders-div td{
+	text-align:right;	
+	white-space:nowrap;
+}
