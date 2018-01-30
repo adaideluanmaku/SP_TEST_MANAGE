@@ -24,7 +24,7 @@ public class Selenium_image {
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 		// 浏览器输入地址
-		driver.get("http://localhost:8095/SP_TEST_MANAGE_BT/login/logout");
+		driver.get("http://www.w3school.com.cn/");
 
 		// 浏览器最大化
 		driver.manage().window().maximize();
@@ -33,31 +33,50 @@ public class Selenium_image {
 		File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		try {
 			Thread.sleep(3000);
-			FileUtils.copyFile(screenshot, new File("E:\\QQ_actual.jpg"));//获取的页面图片
-			File fileInput = new File("E:\\QQ_expected.jpg");//断言，预期图片
-			File fileOutput = new File("E:\\QQ_actual.jpg");//获取的页面图片
+			FileUtils.copyFile(screenshot, new File("E:\\test.jpg"));//selenium截取的页面图片
+			File fileInput = new File("E:\\ch.jpg");//断言，预期图片
+			File fileOutput = new File("E:\\test.jpg");//selenium截取的页面图片
 
 			BufferedImage bufileInput = ImageIO.read(fileInput);
 			DataBuffer dafileInput = bufileInput.getData().getDataBuffer();
-			int sizefileInput = dafileInput.getSize();
+			int sizefileInput = dafileInput.getSize();//获取断言图片的属性总数
 			BufferedImage bufileOutput = ImageIO.read(fileOutput);
 			DataBuffer dafileOutput = bufileOutput.getData().getDataBuffer();
-			int sizefileOutput = dafileOutput.getSize();
+			int sizefileOutput = dafileOutput.getSize();//selenium截取的页面图片的属性总数
 
-			boolean matchFlag = true;
-			if (sizefileInput == sizefileOutput) {
-				for (int j = 0; j < sizefileInput; j++) {
-					if (dafileInput.getElem(j) != dafileOutput.getElem(j)) {
-						matchFlag = false;
-						break;
+			//特别说明：selenium截取的图片是整个页面，所以页面属性总数应该是最多的。
+			//而断言所截取的图片，应该是整个页面的一部分作为测试重点，页面属性总数不可能大于整个页面。
+			//所以，我们做测试的时候，断言图片只要截取页面中的主要部分就可以了，无需把没用的东西也截取进来
+			boolean matchFlag = true;//默认图片相同，这个标记可以返回给其他地方使用
+			if (sizefileInput <= sizefileOutput) {
+//				for (int j = 0; j < sizefileInput; j++) {
+//					if (dafileInput.getElem(j) != dafileOutput.getElem(j)) {
+//						matchFlag = false;
+//						System.out.println("图片属性不同，两张图片存在差异");
+//						break;
+//					}
+//				}
+				int sizeinit=0;
+				for(int i = 0; i < sizefileInput; i++){
+					for(int j = 0; j < sizefileOutput; j++){
+						if (dafileInput.getElem(i) == dafileOutput.getElem(j)) {
+							sizeinit++;
+						}
 					}
+				}
+				if(sizeinit==sizefileInput){
+					System.out.println("图片属性不同，两张图片存在差异");
+				}else{
+					System.out.println("图片相同");
 				}
 			} else {
 				matchFlag = false;
-				Assert.assertTrue(matchFlag, "测试过程中的截图和企鹅王截图并不一致");
+				System.out.println("断言属性总数大于预期属性总数，两张图片存在差异");
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		
+		driver.close();
 	}
 }
