@@ -48,27 +48,21 @@ public class Selenium_image {
 			//而断言所截取的图片，应该是整个页面的一部分作为测试重点，页面属性总数不可能大于整个页面。
 			//所以，我们做测试的时候，断言图片只要截取页面中的主要部分就可以了，无需把没用的东西也截取进来
 			boolean matchFlag = true;//默认图片相同，这个标记可以返回给其他地方使用
+			int sizeinit=0;
 			if (sizefileInput <= sizefileOutput) {
-//				for (int j = 0; j < sizefileInput; j++) {
-//					if (dafileInput.getElem(j) != dafileOutput.getElem(j)) {
-//						matchFlag = false;
-//						System.out.println("图片属性不同，两张图片存在差异");
-//						break;
-//					}
-//				}
-				int sizeinit=0;
-				for(int i = 0; i < sizefileInput; i++){
-					for(int j = 0; j < sizefileOutput; j++){
-						if (dafileInput.getElem(i) == dafileOutput.getElem(j)) {
-							sizeinit++;
-						}
+				for (int j = 0; j < sizefileInput; j++) {
+					if (dafileInput.getElem(j) != dafileOutput.getElem(j)) {
+						matchFlag = false;
+						System.out.println("图片属性不同，两张图片存在差异");
+						System.out.println(dafileInput.getElem(j-1)+":"+dafileOutput.getElem(j-1));
+						System.out.println(dafileInput.getElem(j)+":"+dafileOutput.getElem(j));
+						break;
 					}
 				}
-				if(sizeinit==sizefileInput){
-					System.out.println("图片属性不同，两张图片存在差异");
-				}else{
+				if(matchFlag){
 					System.out.println("图片相同");
 				}
+				
 			} else {
 				matchFlag = false;
 				System.out.println("断言属性总数大于预期属性总数，两张图片存在差异");
@@ -77,6 +71,6 @@ public class Selenium_image {
 			System.out.println(e);
 		}
 		
-		driver.close();
+//		driver.close();
 	}
 }
