@@ -442,6 +442,8 @@ $(document).ready(function(){
 	
 	//selenium窗口功能按钮
 	$("#script_dialog #add_").click(function(){
+		$("#script_dialog_1 #scriptid").val();
+		
 		if($('#mm_selenium #script_').val()==''){
 			return;
 		}
@@ -453,6 +455,8 @@ $(document).ready(function(){
 		$("#script_dialog_1 #testurl").textbox('setValue','');
 		
 		$("#script_dialog_1 #testid").val($('#mm_selenium #script_').val())
+    	$('#script_dialog_1 #file_div').hide();
+		
 		//信息编辑入口，重置form表单
 		$("#dialog_type").val(0);
 		
@@ -487,6 +491,9 @@ $(document).ready(function(){
 	    },{    
 	    	 "scripttype":89,    
 		        "scriptname":"断言-全等(页面源代码)"   
+	    },{    
+	    	 "scripttype":90,    
+		        "scriptname":"断言-全等(图片)"   
 	    },{    
 	    	 "scripttype":98,    
 		        "scriptname":"断言-全等"   
@@ -547,6 +554,9 @@ $(document).ready(function(){
 	    	}
 	    	if(record.scripttype == 10 || record.scripttype == 89){
 	    		$('#script_dialog_1 #testvalue').textbox({required:true});
+	    	}
+	    	if(record.scripttype == 90){
+	    		$('#script_dialog_1 #testvalue').textbox('setValue','新的脚本需要保存后才能上传图片');
 	    	}
 		}
 
@@ -1157,7 +1167,7 @@ $(document).ready(function(){
 			text:'关闭',
 			handler:function(){
 				$('#selenium_file').dialog({closed: true,});
-				$('#form_file').form('clear');
+				$('#selenium_file #form_file').form('clear');
 			}
 		}]
 	});
@@ -1200,7 +1210,7 @@ $(document).ready(function(){
 		//文件上传
 		file_load();
 		//进度条
-		progressbar_box();
+		seleniumprogressbar_box();
 		
 	})
 	
@@ -1363,6 +1373,36 @@ $(document).ready(function(){
 		},
 	});
 	
+	//对话框
+	$('#dlg_right_file').dialog(
+		{    
+		title: '附件上传',    
+	    width: 400,    
+	    height: 200,    
+	    closed: true,//true窗口关闭，false窗口打开
+	    modal:true,//弹出后，只能操作本窗口
+	    buttons:[{//对话框底部按钮
+			text:'关闭',
+			handler:function(){
+				$('#dlg_right_file').dialog({closed: true,});
+				$('#selenium_file #form_file').form('clear');
+			}
+		}]
+	});
+	
+	
+	//DIV用来显示图片使用
+	$('#file_dialog_1').dialog({    
+	    title: '文件加载',    
+	    width: 800,
+	    height: 400,  
+	    closed: true,    
+	    modal: true,
+//	    fit:true,//强制自适应浏览器最大
+	    resizable:true,//可拖拉
+	    maximizable:true,//缩小放大按钮
+	    buttons:[]
+	});
 });
 
 function team(){
@@ -1701,6 +1741,9 @@ function script(){
 					if (row.scripttype==89){
 						return "断言-全等(页面源代码)";
 					}
+					if (row.scripttype==90){
+						return "断言-全等(图片)";
+					}
 					if (row.scripttype==98){
 						return "断言-全等";
 					}
@@ -1758,7 +1801,7 @@ function script(){
 	    	$("#script_dialog_1 #testvalue").textbox('setValue',row.testvalue);
 	    	$("#script_dialog_1 #testurl").textbox('setValue',row.testurl);
 	    	$("#script_dialog_1").dialog({closed: false});
-	    	
+	    	$('#script_dialog_1 #file_div').show();
 	    },
 	    //单击选择数据
 	    onClickRow:function(index, row){  
@@ -1855,7 +1898,7 @@ function script_ComboBox(){
 //上传文件
 function file_load(){
 	var addurl=$("#addurl").val();
-	var imgPath = $("#learnfile1").filebox('getValue');
+	var imgPath = $("#selenium_file #seleniumfile1").filebox('getValue');
 	if (imgPath == "") {
 		$.messager.alert('警告', '请选择上传文件！');
 		return false;
@@ -1873,7 +1916,7 @@ function file_load(){
 		type:'post',
 		url:addurl+"/testmng/seleniumuploadfile",
 		async:true,
-		data:new FormData($('#form_file')[0]),
+		data:new FormData($('#selenium_file #form_file')[0]),
 		processData:false,
         contentType:false,
     	success: function(result){
@@ -1887,10 +1930,14 @@ function file_load(){
 }
 
 //文件上传下载专用进度条
-function progressbar_box() {  
+function seleniumprogressbar_box() {  
 	$("#progressbar").remove();
-	$("#selenium_file").append('<div id="progressbar"></div>')
+	$("#selenium_file").append('<div id="progressbar"></div>');
 	
+	progressstatus();
+};  
+
+function progressstatus(){
 	//定时器
 	var interval=null;
     //生成一个进度条，想要修改进度条的颜色去css文件中去修改  
@@ -1927,7 +1974,7 @@ function progressbar_box() {
     
 //    console.log($('#progressbar').progressbar('options'));  
     //$('#box').progressbar('resize', 80);  没啥大用  
-};  
+}
 
 //从后台获取当前文件上传下载进度
 function getProgress(){
@@ -1956,3 +2003,81 @@ function selenium_link(){
 	$('#script_dialog_2 #box_db').datagrid('load', {projectid:$('#box_2_3 #ComboBox_right').combobox('getValue'),searchdate:$('#script_dialog_2 #search_data').textbox('getValue')},'reload');
 	$('#script_dialog_2').dialog({closed:false});
 }
+
+function files_button(){
+	$('#dlg_right_file #scriptid').val($("#script_dialog_1 #scriptid").val());
+	$('#dlg_right_file').dialog('open');
+	$("#progressbar").remove();
+}
+
+//上传附件
+//easyui-form提交
+function files_sub(){
+	//文件上传
+	scriptfile_load();
+	//进度条
+	seleniumprogressbar_box();
+}
+
+//上传文件
+function scriptfile_load(){
+	var addurl=$("#addurl").val();
+	var imgPath = $("#dlg_right_file #file1").filebox('getValue');
+	if (imgPath == "") {
+		$.messager.alert('警告', '请选择上传文件！');
+		return false;
+	}
+	//判断上传文件的后缀名
+   var strExtension = imgPath.substr(imgPath.lastIndexOf('.') + 1);
+   if (strExtension != 'jpg' && strExtension != 'gif'
+   && strExtension != 'png' && strExtension != 'bmp') {
+   	$.messager.alert('警告','请选择图片文件！');
+       return false;
+   };
+	$.ajax({
+		type:'post',
+		url:addurl+"/testmng/fileadd",
+		async:true,
+		data:new FormData($('#dlg_right_file #form_file')[0]),
+		processData:false,
+        contentType:false,
+    	success: function(result){
+    		return;
+		},
+		error:function(XMLResponse){
+			alert(XMLResponse.responseText)
+		}
+	});
+	return false;
+}
+
+function scriptsearchfile(){
+	$("#file_dialog_1 #scriptid").val($("#script_dialog_1 #scriptid").val());
+	$.ajax({
+		type:'post',
+		url:addurl+"/testmng/scriptreadfile",
+		async:false,
+		cache:true,
+		data:{scriptid:$("#file_dialog_1 #scriptid").val()},
+    	success: function(result){
+    		if(result.linkfile != undefined){
+    			$("#file_dialog_1 #file_img").attr("src","data:image/gif;base64,"+result.linkfile);
+	    		$('#file_dialog_1').dialog({closed:false});
+	    		$("#file_dialog_1 #fileid").val(result.fileid);
+    		}else{
+    			$.messager.alert('警告','未找到附件');
+    		}
+		},
+		error:function(XMLResponse){
+			alert(XMLResponse.responseText)
+		}
+	});
+}
+
+//文件上传下载专用进度条
+function seleniumprogressbar_box() {  
+	$("#progressbar").remove();
+	$("#dlg_right_file").append('<div id="progressbar"></div>');
+	
+	progressstatus();
+};  

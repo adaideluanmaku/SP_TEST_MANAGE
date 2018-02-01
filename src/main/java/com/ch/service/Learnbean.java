@@ -137,10 +137,10 @@ public class Learnbean {
 			learnid=Integer.parseInt(req.getParameter("learnid"));
 		}
 		
-		sql="delete from learn where learnid = ? ";
+		sql="delete from learn where learnid = ?";
 		jdbcTemplate.update(sql,new Object[]{learnid});
 		
-		sql="delete from files where learnid = ? ";
+		sql="delete from files where linkid = ?  and linktype=1";
 		jdbcTemplate.update(sql,new Object[]{learnid});
 		log.debug(sql);
 		return "ok";
@@ -281,7 +281,7 @@ public class Learnbean {
 		jdbcTemplate.update(sql,new Object[]{learngroupid});
 		log.debug(sql);
 		
-		sql="delete from files where learnid = ? ";
+		sql="delete from files where linkid = ?  and linktype=1";
 		jdbcTemplate.batchUpdate(sql,new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -323,7 +323,7 @@ public class Learnbean {
 //			fos.write(mf.getBytes());
 //			fos.close();
 			//保存在数据库
-			sql="insert into files(learnfile,learnid) values(?,?) ";
+			sql="insert into files(linkfile,linkid,linktype) values(?,?,1) ";
 			jdbcTemplate.update(sql, new Object[]{mf.getBytes(),req.getParameter("learnid")});
 			log.debug(sql);
 		}
@@ -341,7 +341,7 @@ public class Learnbean {
 		//blob转二进制
 		Blob blob=null;
 		
-		sql="select fileid,learnfile from files where learnid=? order by fileid asc limit 0,1 ";
+		sql="select fileid,linkfile from files where linkid=? and linktype=1 order by fileid asc limit 0,1 ";
 		list=jdbcTemplate.queryForList(sql, new Object[]{req.getParameter("learnid")});
 		if(list.size()>0){
 			map=(Map)list.get(0);
@@ -349,6 +349,7 @@ public class Learnbean {
 		
 		//将Blob装换成二进制数据，再转成字节数组
 //		blob=(Blob) map.get("learnfile");
+//		
 //		InputStream in=null;
 //		try {
 //			in = blob.getBinaryStream();
@@ -366,14 +367,14 @@ public class Learnbean {
 //		map.put("learnfile", file);
 		
 		//将文件输出到本地磁盘上
-//		if(files==null || "".equals(files)){
+//		if(file==null || "".equals(file)){
 //			return url;
 //		}
-//		String fileName = files.getOriginalFilename();
+//		//String fileName = file.getOriginalFilename();//这个暂时没用，有问题
 //		try {
 //			//数据库图片输出到本地路径
-//			FileOutputStream fos = new FileOutputStream(new File("/file_cache/"+fileName));
-//			fos.write(files.getBytes());
+//			FileOutputStream fos = new FileOutputStream(new File("C:/file_cache/aaa.jpg"));
+//			fos.write(file);
 //			fos.close();
 //			
 //		} catch (IOException e) {
@@ -392,10 +393,10 @@ public class Learnbean {
 		Map<String, Object> map=null;
 		
 		if("down".equals(req.getParameter("button"))){
-			sql="select learnfile,fileid from files where fileid>? and learnid=? order by fileid asc limit 0,1 ";
+			sql="select linkfile,fileid from files where fileid>? and linkid=? and linktype=1 order by fileid asc limit 0,1 ";
 			list=jdbcTemplate.queryForList(sql,new Object[]{req.getParameter("fileid"),req.getParameter("learnid")});
 		}else{
-			sql="select learnfile,fileid from files where fileid<? and learnid=? order by fileid desc limit 0,1 ";
+			sql="select linkfile,fileid from files where fileid<? and linkid=? and linktype=1 order by fileid desc limit 0,1 ";
 			list=jdbcTemplate.queryForList(sql, new Object[]{req.getParameter("fileid"),req.getParameter("learnid")});
 		}
 		if(list.size()>0){
@@ -410,10 +411,10 @@ public class Learnbean {
 		List list=null;
 		Map<String, Object> map=null;
 		
-		sql="delete from files where fileid=? and learnid=? ";
+		sql="delete from files where fileid=? and linkid=?  and linktype=1";
 		jdbcTemplate.update(sql,new Object[]{req.getParameter("fileid"),req.getParameter("learnid")});
 		
-		sql="select fileid,learnfile from files where learnid=? order by fileid asc limit 0,1 ";
+		sql="select fileid,linkfile from files where linkid=?  and linktype=1 order by fileid asc limit 0,1 ";
 		list=jdbcTemplate.queryForList(sql, new Object[]{req.getParameter("learnid")});
 		
 		if(list.size()>0){

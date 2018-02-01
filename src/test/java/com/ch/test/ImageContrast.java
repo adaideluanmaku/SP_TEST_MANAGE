@@ -20,6 +20,7 @@ import org.testng.Assert;
 
 import com.ch.Imagetest.ImageTestDemo;
 
+//selenium进行图片对比
 public class ImageContrast {
 	@Autowired
 //	ImageTestDemo imageTestDemo;

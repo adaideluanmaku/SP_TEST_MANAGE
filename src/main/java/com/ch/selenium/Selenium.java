@@ -1,5 +1,13 @@
 package com.ch.selenium;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +18,12 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.StringUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -25,6 +36,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ch.Imagetest.ImageTestDemo;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -110,9 +122,10 @@ public class Selenium {
 					result1=selenium_obj(driver,scriptmap,0);
 				}
 				if(!"".equals(result1)){
-					if(result1.contains("存在BUG") && status==0){
+					result=result1;
+					if(result.contains("存在BUG") && status==0){
 						status=1;
-						result=result1;
+//						result=result1;
 //						break;
 					}
 				}
@@ -372,14 +385,82 @@ public class Selenium {
 		//是否为页面源码比较(还在完善，源码的排列可能不同导致对比失败)
 		if(Integer.parseInt(scriptmap.get("scripttype").toString())==89){
 			result=driver.getPageSource();
-			System.out.println(result);
-			System.out.println(scriptmap.get("testvalue").toString().trim());
 			if (result.equals(scriptmap.get("testvalue").toString().trim())) {
 				result="测试通过";
 				System.out.println("测试案例："+scriptmap.get("testname")+"||"+scriptmap.get("testno")+"||"+result);
 			} else {
 				result="存在BUG(步："+scriptmap.get("step")+")";
 				System.out.println("测试案例："+scriptmap.get("testname")+"||"+scriptmap.get("testno")+"||"+result);
+			}
+		}
+		
+		//是否为图片比较
+		if(Integer.parseInt(scriptmap.get("scripttype").toString())==90){
+			
+			//从数据获取断言图片，然后放在C盘根目录
+			String sql="select linkfile from files where linkid=? and linktype=2 limit 1";
+			Blob blob = jdbcTemplate.queryForObject(sql, Blob.class,new Object[]{scriptmap.get("scriptid")});
+			//将Blob装换成二进制数据，再转成字节数组
+			InputStream in=null;
+			try {
+				in = blob.getBinaryStream();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			byte[] file=null;
+			try {
+				file = new byte[in.available()];
+				in.read(file);
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//将文件输出到本地磁盘上
+			try {
+				//数据库图片输出到本地路径
+				FileOutputStream fos = new FileOutputStream(new File("C:/ch.jpg"));
+				fos.write(file);
+				fos.close();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			
+			//截取测试页面图片，保存在C盘根目录
+			File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			try {
+				Thread.sleep(3000);
+				FileUtils.copyFile(screenshot, new File("C:/test.jpg"));//selenium截取的页面图片
+				
+				//开始对比图片相似度
+				File fileInput = new File("C:/ch.jpg");//断言，预期图片
+				File fileOutput = new File("C:/test.jpg");//selenium截取的页面图片
+
+				String image1;
+				String image2;
+				try {
+					ImageTestDemo imageTestDemo = new ImageTestDemo();
+					image1 = imageTestDemo.getHash(new FileInputStream(fileInput));
+					image2 = imageTestDemo.getHash(new FileInputStream(fileOutput));
+					int ressum=imageTestDemo.distance(image1, image2);
+					System.out.println("1:1 Score is " + ressum+" 。说明：汉明距离越大表明图片差异越大，0<x<5不同但相似，>5明显不同");
+
+					if (ressum>0) {
+						result="存在BUG(步："+scriptmap.get("step")+")";
+						System.out.println("测试案例："+scriptmap.get("testname")+"||"+scriptmap.get("testno")+"||"+result);
+					} else {
+						result="测试通过";
+						System.out.println("测试案例："+scriptmap.get("testname")+"||"+scriptmap.get("testno")+"||"+result);
+						
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				System.out.println(e);
 			}
 		}
 		

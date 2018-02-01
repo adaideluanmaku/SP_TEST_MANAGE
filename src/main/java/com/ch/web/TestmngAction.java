@@ -502,4 +502,31 @@ public class TestmngAction {
 		System.out.println("总耗时："+(endTime-startTime)+"毫秒");
 		return "=========数据制作结束=======总耗时："+(endTime-startTime)+"毫秒";
 	}
+	
+	//上传file文件
+	@RequestMapping("/fileadd")
+	@ResponseBody
+	public void fileadd(HttpServletRequest req) throws IOException{
+		testmngbean.fileadd(req);
+	}
+	
+	//获取file文件
+	@RequestMapping("/scriptreadfile")
+	@ResponseBody
+	public Map scriptreadfile(HttpServletRequest req) throws IOException{
+		byte[] file=null;
+		Map map=null;
+		
+		//返回MAP时，JS无法解析base64编码成图片，所以MAP里面的文件不能用base64编码
+		map=testmngbean.scriptreadfile(req);
+		
+		//单独返回文件时，JS可以解析base64编码成图片
+//			file=Base64.encodeBase64((byte[]) map.get("learnfile"));
+		
+		//base64编码
+//			Base64.encodeBase64(file);
+		//base64解码
+//			Base64.decodeBase64(file);
+		return map;
+	}
 }

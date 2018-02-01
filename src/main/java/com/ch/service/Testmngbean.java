@@ -343,31 +343,32 @@ public class Testmngbean {
 			teamid=Integer.parseInt(req.getParameter("teamid"));
 		}
 		
-		sql="delete from team where teamid=?";
+		
+		sql="delete a from files a "
+				+ "inner join script b on a.linkid=b.scriptid "  
+				+ "inner join testmng c on b.testid=c.testid "
+				+ "inner join project d on c.projectid=d.projectid "
+				+ "inner join team e on d.teamid=e.teamid " 
+				+ "where e.teamid=? and a.linktype=2 ";
 		jdbcTemplate.update(sql,new Object[]{teamid});
 		
-		sql="select projectid from project where teamid=?";
-		List list=jdbcTemplate.queryForList(sql,new Object[]{teamid});
+		sql="delete b from script b " 
+				+ "inner join testmng c on b.testid=c.testid "  
+				+ "inner join project d on c.projectid=d.projectid "
+				+ "inner join team e on d.teamid=e.teamid " 
+				+ "where e.teamid=? ";
+		jdbcTemplate.update(sql,new Object[]{teamid});
 		
-		Map map=null;
-		for(int i=0;i<list.size();i++){
-			map=(Map)list.get(i);
-			
-			sql="select testid from testmng where projectid=?";
-			List list1=jdbcTemplate.queryForList(sql,new Object[]{map.get("projectid")});
-			
-			for(int i1=0;i1<list1.size();i1++){
-				int testid=Integer.parseInt(list1.get(i1).toString());
-				sql="delete from script where testid=?";
-				jdbcTemplate.update(sql,new Object[]{testid});
-			}
-			
-			sql="delete from testmng where projectid=?";
-			jdbcTemplate.update(sql,new Object[]{map.get("projectid")});
-			
-		}
+		sql="delete c from testmng c "  
+				+ "inner join project d on c.projectid=d.projectid " 
+				+ "inner join team e on d.teamid=e.teamid " 
+				+ "where e.teamid=? ";
+		jdbcTemplate.update(sql,new Object[]{teamid});
 		
 		sql="delete from project where teamid=?";
+		jdbcTemplate.update(sql,new Object[]{teamid});
+		
+		sql="delete from team where teamid=?";
 		jdbcTemplate.update(sql,new Object[]{teamid});
 		
 		return "ok";
@@ -474,16 +475,19 @@ public class Testmngbean {
 		sql="delete from project where projectid=?";
 		jdbcTemplate.update(sql,new Object[]{projectid});
 		
-		sql="select testid from testmng where projectid=?";
-		List list=jdbcTemplate.queryForList(sql,new Object[]{projectid});
+		sql="delete a from files a "
+				+ "inner join script b on a.linkid=b.scriptid "  
+				+ "inner join testmng c on b.testid=c.testid inner join project d on c.projectid=d.projectid " 
+				+ "where d.projectid=? and a.linktype=2 ";
+		jdbcTemplate.update(sql,new Object[]{projectid});
 		
-		for(int i=0;i<list.size();i++){
-			int testid=Integer.parseInt(list.get(i).toString());
-			sql="delete from script where testid=?";
-			jdbcTemplate.update(sql,new Object[]{testid});
-		}
+		sql="delete b from script b " 
+				+ "inner join testmng c on b.testid=c.testid "  
+				+ "inner join project d on c.projectid=d.projectid " 
+				+ "where d.projectid=? ";
+		jdbcTemplate.update(sql,new Object[]{projectid});
 		
-		sql="delete from testmng where projectid=?";
+		sql="delete from testmng where projectid=? ";
 		jdbcTemplate.update(sql,new Object[]{projectid});
 		return "ok";
 	}
@@ -588,6 +592,9 @@ public class Testmngbean {
 		}
 		
 		sql="delete from testmng where testid=?";
+		jdbcTemplate.update(sql,new Object[]{testid});
+		
+		sql="delete from files a , script b where a.linkid=b.scriptid and a.linktype=2 and b.testid=?";
 		jdbcTemplate.update(sql,new Object[]{testid});
 		
 		sql="delete from script where testid=?";
@@ -836,6 +843,9 @@ public class Testmngbean {
 		sql="delete from script where scriptid=?";
 		jdbcTemplate.update(sql,new Object[]{scriptid});
 		
+		sql="delete from files where linkid=? and linktype=2";
+		jdbcTemplate.update(sql,new Object[]{scriptid});
+		
 		return "ok";
 	}
 	
@@ -892,5 +902,101 @@ public class Testmngbean {
 		sql="delete from seleniumfiles where testid=?";
 		jdbcTemplate.update(sql, new Object[]{req.getParameter("testid")});
 		
+	}
+	
+	/**
+	 * js上传图片到服务器，服务器保存二进制流到数据库
+	 * @throws IOException 
+	 * 
+	 * */
+	public void fileadd(HttpServletRequest req) throws IOException{
+		String sql=null;
+		
+//		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(  
+//				req.getSession().getServletContext()); 
+		
+		MultipartRequest multipartRequest = (MultipartRequest) req;
+		// 获得file集合
+		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+		
+		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+			//循环获取file对象
+			MultipartFile mf = entity.getValue();
+			//输出到本地路径
+			//file名称
+//			String fileName = mf.getOriginalFilename();
+//			FileOutputStream fos = new FileOutputStream(new File("E:/"+fileName));
+//			fos.write(mf.getBytes());
+//			fos.close();
+			//保存在数据库
+			System.out.println(req.getParameter("scriptid"));
+			sql="select count(*) from files where linkid=? and linktype=2";
+			int sum=jdbcTemplate.queryForObject(sql,int.class, new Object[]{req.getParameter("scriptid")});
+			
+			if(sum>0){
+				sql="update files set linkfile=? where linkid=? and linktype=2 ";
+				jdbcTemplate.update(sql, new Object[]{mf.getBytes(),req.getParameter("scriptid")});
+			}else{
+				sql="insert into files(linkfile,linkid,linktype) values(?,?,2) ";
+				jdbcTemplate.update(sql, new Object[]{mf.getBytes(),req.getParameter("scriptid")});
+			}
+			
+		}
+	}
+	
+	/**
+	 * 文件下载，从数据库取出二进制流数据
+	 * 
+	 * */
+	public Map scriptreadfile(HttpServletRequest req){
+		String sql=null;
+		String url=null;
+		Map<String, Object> map=null;
+		List list=null;
+		//blob转二进制
+		Blob blob=null;
+		
+		sql="select fileid,linkfile from files where linkid=? and linktype=2 order by fileid asc limit 0,1 ";
+		list=jdbcTemplate.queryForList(sql, new Object[]{req.getParameter("scriptid")});
+		if(list.size()>0){
+			map=(Map)list.get(0);
+		}
+		
+		//将Blob装换成二进制数据，再转成字节数组
+//		blob=(Blob) map.get("learnfile");
+//		InputStream in=null;
+//		try {
+//			in = blob.getBinaryStream();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		byte[] file=null;
+//		try {
+//			file = new byte[in.available()];
+//			in.read(file);
+//			in.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		map.put("learnfile", file);
+		
+		//将文件输出到本地磁盘上
+//		if(files==null || "".equals(files)){
+//			return url;
+//		}
+//		String fileName = files.getOriginalFilename();
+//		try {
+//			//数据库图片输出到本地路径
+//			FileOutputStream fos = new FileOutputStream(new File("/file_cache/"+fileName));
+//			fos.write(files.getBytes());
+//			fos.close();
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return url;
+		
+		return map;
 	}
 }

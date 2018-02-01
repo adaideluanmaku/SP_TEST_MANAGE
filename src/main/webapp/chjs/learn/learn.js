@@ -303,8 +303,8 @@ $(document).ready(function(){
 					cache:true,
 					data:{learnid:learnid,fileid:fileid},
 			    	success: function(result){
-			    		if(result.learnfile != undefined){
-			    			$("#file_img").attr("src","data:image/gif;base64,"+result.learnfile);
+			    		if(result.linkfile != undefined){
+			    			$("#file_img").attr("src","data:image/gif;base64,"+result.linkfile);
 				    		$("#file_dialog #fileid").val(result.fileid);
 			    		}else{
 			    			$('#file_dialog').dialog({closed:true});
@@ -327,8 +327,8 @@ $(document).ready(function(){
 					cache:true,
 					data:{learnid:learnid,fileid:fileid,button:'up'},
 			    	success: function(result){
-			    		if(result.learnfile != undefined){
-			    			$("#file_img").attr("src","data:image/gif;base64,"+result.learnfile);
+			    		if(result.linkfile != undefined){
+			    			$("#file_img").attr("src","data:image/gif;base64,"+result.linkfile);
 				    		var fileid=$("#file_dialog #fileid").val(result.fileid);
 			    		}
 					},
@@ -349,8 +349,8 @@ $(document).ready(function(){
 					cache:true,
 					data:{learnid:learnid,fileid:fileid,button:'down'},
 			    	success: function(result){
-			    		if(result.learnfile != undefined){
-			    			$("#file_img").attr("src","data:image/gif;base64,"+result.learnfile);
+			    		if(result.linkfile != undefined){
+			    			$("#file_img").attr("src","data:image/gif;base64,"+result.linkfile);
 //			    			$("#file_p").text(result.learnfile);
 				    		var fileid=$("#file_dialog #fileid").val(result.fileid);
 			    		}
@@ -478,6 +478,7 @@ function learn(){
 	    	if(field=="fujian"){
 	    		$('#dlg_right_file #learnid').val(value);
 		    	$('#dlg_right_file').dialog('open');
+		    	$("#progressbar").remove();
 	    	}
 	    	if(field=="chakan"){
 	    		$("#file_dialog #learnid").val(value);
@@ -488,8 +489,8 @@ function learn(){
 					cache:true,
 					data:{learnid:value},
 			    	success: function(result){
-			    		if(result.learnfile != undefined){
-			    			$("#file_img").attr("src","data:image/gif;base64,"+result.learnfile);
+			    		if(result.linkfile != undefined){
+			    			$("#file_img").attr("src","data:image/gif;base64,"+result.linkfile);
 				    		$('#file_dialog').dialog({closed:false});
 				    		$("#learnid").val(value);
 				    		$("#fileid").val(result.fileid);

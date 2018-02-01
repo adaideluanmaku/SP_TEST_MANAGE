@@ -349,6 +349,14 @@
 			</tr>
 			<tr>
 				<td style="text-align: left;">
+					<div id="file_div">上传 : 
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="files_button()">选择图片</a>
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="scriptsearchfile()">查看图片</a>
+					</div>
+				</td >
+			</tr>
+			<tr>
+				<td style="text-align: left;">
 					<div >测试页面地址 : </div>
 				</td>
 			</tr>
@@ -395,7 +403,7 @@
 				<form id="form_file" enctype="multipart/form-data" method="POST">
 					<input id="testid" type="hidden" value="" name="testid">
 			        <div>  
-			            <input id="learnfile1" name="learnfile1" class="easyui-filebox" style="width:300px">
+			            <input id="seleniumfile1" name="learnfile1" class="easyui-filebox" style="width:300px">
 			            <!-- <input type="submit" value="提交"> -->
 			            <a id="file_button" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">提交</a>
 			        </div>  
@@ -523,6 +531,40 @@
 			</td>
 		</tr>
 	</table>
+</div>
+<div id="dlg_right_file">
+	<!-- 进度条 -->
+	<!-- 文本框 -->
+	<div style="margin-bottom:20px; text-align: center; padding-top:10px;">
+		<table>
+			<tr>
+				<td style="text-align: left;">
+					<div>附件 : </div>
+				</td >
+			</tr>
+			<tr>
+				<td>
+				<!-- 上传附件 -->
+				<form id="form_file" enctype="multipart/form-data" method="POST">
+					<input id="scriptid" type="hidden" value="" name="scriptid">
+			        <div>  
+			            <input id="file1" name="file1" class="easyui-filebox" style="width:300px">
+			            <!-- <input type="submit" value="提交"> -->
+			            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="files_sub()">提交</a>
+			        </div>  
+			 	</form>
+			 	<div style="margin: 0 auto; color: red">只能上传图片</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<!-- 附件显示查看或者下载 -->
+<div id="file_dialog_1" class="easyui-resizable">
+	<input id="scriptid" type="hidden" value="">
+	<input id="fileid" type="hidden" value="">
+	<img id="file_img" src="">
+	<p id="file_p"></p>
 </div>
 </body>
 </html>
