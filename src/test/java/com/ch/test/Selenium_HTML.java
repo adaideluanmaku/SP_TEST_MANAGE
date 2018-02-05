@@ -1,13 +1,9 @@
 package com.ch.test;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -16,16 +12,14 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.Assert;
 
 import com.ch.Imagetest.ImageTestDemo;
 
-//selenium进行图片对比
-public class ImageContrast {
+public class Selenium_HTML {
 	@Autowired
 //	ImageTestDemo imageTestDemo;
 	@Test
-	public void testImage() {
+	public void testHTML() {
 		WebDriver driver = new FirefoxDriver();
 		
 		// 全局设置延迟，如果操作无响应，则等待最多10S

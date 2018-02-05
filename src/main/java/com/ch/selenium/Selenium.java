@@ -20,6 +20,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.StringUtil;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
@@ -384,8 +386,39 @@ public class Selenium {
 		
 		//是否为页面源码比较(还在完善，源码的排列可能不同导致对比失败)
 		if(Integer.parseInt(scriptmap.get("scripttype").toString())==89){
+			// 读取HTML-A源码
+			Document doc = Jsoup.parse(scriptmap.get("testvalue").toString());
+			String[] docstr = doc.toString().split("\n");
+			
+			// 读取HTML-B源码
+			Document doc1=null;
+			try {
+				doc1 = Jsoup.connect(driver.getCurrentUrl()).get();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String[] docstr1 = doc1.toString().split("\n");
+			
+			boolean resultstatus = true;
+			if(docstr.length==docstr1.length){
+				for(int i=0;i<docstr.length;i++){
+					String str = docstr[i].trim();
+					String str1 = docstr1[i].trim();
+					
+					if(!str.equals(str1)){
+						System.out.println("第"+(i+1)+"行出现问题：");
+						System.out.println(str);
+						System.out.println(str1);
+						resultstatus = false;
+						break;
+					} 
+				}
+			}
+			
+			
 			result=driver.getPageSource();
-			if (result.equals(scriptmap.get("testvalue").toString().trim())) {
+			if (resultstatus) {
 				result="测试通过";
 				System.out.println("测试案例："+scriptmap.get("testname")+"||"+scriptmap.get("testno")+"||"+result);
 			} else {
@@ -434,7 +467,7 @@ public class Selenium {
 				FileUtils.copyFile(screenshot, new File("C:/test.jpg"));//selenium截取的页面图片
 				
 				//开始对比图片相似度
-				File fileInput = new File("C:/ch.jpg");//断言，预期图片
+				File fileInput = new File("C:/ch.jpg");//断言，预期结果的图片
 				File fileOutput = new File("C:/test.jpg");//selenium截取的页面图片
 
 				String image1;
