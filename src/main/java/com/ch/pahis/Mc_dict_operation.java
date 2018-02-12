@@ -34,8 +34,8 @@ public class Mc_dict_operation {
 		sql="select * from mc_dict_operation where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_operation where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_operation where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_operation(premoment_high, searchcode, premoment_low, operationname, is_save, "
 				+ "typename, createdate, match_scheme, useanti, drugtime, operationcode) "

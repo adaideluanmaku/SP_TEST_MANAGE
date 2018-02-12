@@ -442,7 +442,7 @@ $(document).ready(function(){
 	
 	//selenium窗口功能按钮
 	$("#script_dialog #add_").click(function(){
-		$("#script_dialog_1 #scriptid").val();
+		$("#script_dialog_1 #scriptid").val('');
 		
 		if($('#mm_selenium #script_').val()==''){
 			return;
@@ -455,7 +455,7 @@ $(document).ready(function(){
 		$("#script_dialog_1 #testurl").textbox('setValue','');
 		
 		$("#script_dialog_1 #testid").val($('#mm_selenium #script_').val())
-    	$('#script_dialog_1 #file_div').hide();
+//    	$('#script_dialog_1 #file_div').hide();
 		
 		//信息编辑入口，重置form表单
 		$("#dialog_type").val(0);
@@ -530,6 +530,7 @@ $(document).ready(function(){
 	    	$('#script_dialog_1 #testurl').textbox({required:false})
 	    	$('#script_dialog_1 #testvalue').textbox({required:false});
 	    	$('#script_dialog_1 #selenium_link').linkbutton('disable');
+	    	$('#script_dialog_1 #file_div').hide();
 	    	
 	    	if(record.scripttype == 70){
 	    		$('#script_dialog_1 #selenium_link').linkbutton('enable');
@@ -556,7 +557,7 @@ $(document).ready(function(){
 	    		$('#script_dialog_1 #testvalue').textbox({required:true});
 	    	}
 	    	if(record.scripttype == 90){
-	    		$('#script_dialog_1 #testvalue').textbox('setValue','新的脚本需要保存后才能上传图片');
+	    		$('#script_dialog_1 #file_div').show();
 	    	}
 		}
 
@@ -1801,7 +1802,6 @@ function script(){
 	    	$("#script_dialog_1 #testvalue").textbox('setValue',row.testvalue);
 	    	$("#script_dialog_1 #testurl").textbox('setValue',row.testurl);
 	    	$("#script_dialog_1").dialog({closed: false});
-	    	$('#script_dialog_1 #file_div').show();
 	    },
 	    //单击选择数据
 	    onClickRow:function(index, row){  
@@ -2005,8 +2005,12 @@ function selenium_link(){
 }
 
 function files_button(){
+	if($("#script_dialog_1 #scriptid").val()==''){
+		$.messager.alert('警告','请先保存脚本后再上传图片！');
+		return;
+	}
 	$('#dlg_right_file #scriptid').val($("#script_dialog_1 #scriptid").val());
-	$('#dlg_right_file').dialog('open');
+	$('#dlg_right_file').dialog({closed: false});
 	$("#progressbar").remove();
 }
 

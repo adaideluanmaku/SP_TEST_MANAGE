@@ -34,8 +34,8 @@ public class Mc_dict_route {
 		sql="select * from mc_dict_route where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_route where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_route where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_route(searchcode, match_user, is_save, createdate, match_scheme, routename, "
 				+ "isskintest, pass_route_name, routecode, route_type, abbrev, pass_routeid, match_time, "

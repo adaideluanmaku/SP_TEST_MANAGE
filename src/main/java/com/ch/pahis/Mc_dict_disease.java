@@ -34,8 +34,8 @@ public class Mc_dict_disease {
 		sql="select * from mc_dict_disease where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_disease where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_disease where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_disease(searchcode, typecode, match_user, is_save,  is_mxb, "
 				+ "match_scheme, disname, pass_icd_code, pass_icd_name, dis_type, discode, typename, "

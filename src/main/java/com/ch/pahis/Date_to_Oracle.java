@@ -1,8 +1,10 @@
 package com.ch.pahis;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ public class Date_to_Oracle {
 	@Autowired
 	JdbcTemplate jdbcTemplate_anli;
 	
+	@Autowired
+	Createtable createtable;
 	@Autowired
 	AnliCount anliCount;
 	@Autowired
@@ -143,9 +147,9 @@ public class Date_to_Oracle {
 		}
 		
 		int sum_date=sum_date1;//10---表示N天，每分割一次，起始日期增加一天，不能设置0，N表示循环N次分割
-		int count=count1*sum_date;//1*sum_date----一天数据量，一批案例的循环次数,数据集22条
-		int countzy=count1*sum_date;//一天数据量，一批案例的循环次数,数据集22条
-		int countcy=count1*sum_date;//一天数据量，一批案例的循环次数,数据集22条
+		int count=count1*sum_date;//单天循环次数*天数----一天数据总量，一批案例的循环次数,数据集22条
+		int countzy=count1*sum_date;//单天循环次数*天数
+		int countcy=count1*sum_date;//单天循环次数*天数，如果要削减出院数据量，可在方法里面削减
 //		if(count1>=6){
 //			countcy=count1*sum_date/6;
 //		}
@@ -174,7 +178,13 @@ public class Date_to_Oracle {
 		//开始工作啦
 		//创建所有表
 		if(createTB==1){
-			clear_mc.creattable();
+//			clear_mc.creattable();
+			try {
+				createtable.ceatetable();
+			} catch (ClassNotFoundException | SQLException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		//清理业务表
 		if(trunca==1){
@@ -184,7 +194,14 @@ public class Date_to_Oracle {
 		//创建视图
 		if(createview==1){
 			if(StringUtils.isNotBlank(hiscodes[0])){
-				createView.createV(hiscodes[0]);
+//				createView.createV(hiscodes[0]);
+				try {
+					createtable.ceateview();
+					createtable.ceatedictview(hiscodes);
+				} catch (ClassNotFoundException | SQLException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -202,6 +219,7 @@ public class Date_to_Oracle {
 				return;
 			}
 			
+			int cid = 0;//单机构全局药品唯一编号
 			if(mz==1){
 				System.out.println("开始导门诊数据");
 //				new Thread(new Runnable(){
@@ -220,7 +238,7 @@ public class Date_to_Oracle {
 						}else{
 							pass_t_mc_clinic_lab.clinic_lab(trunca, count, sum_date, anlilist, hiscode, ienddate, startdate);
 						}
-						t_mc_clinic_order.clinic_order(trunca, count, sum_date, anlilist, hiscode, ienddate);
+						cid=t_mc_clinic_order.clinic_order(cid,trunca, count, sum_date, anlilist, hiscode, ienddate);
 						t_mc_clinic_patient.clinic_patient(trunca, count, sum_date, anlilist, hiscode, ienddate, enddate);
 //					}
 //				}).start();
@@ -246,7 +264,7 @@ public class Date_to_Oracle {
 							pass_t_mc_inhosp_lab.inhosp_lab(trunca, countzy, sum_date, anlilist, hiscode, ienddate, startdate);
 						}
 						t_mc_inhosp_operation.inhosp_operation(trunca, countzy, sum_date, anlilist, hiscode, ienddate, enddate);
-						t_mc_inhosp_order.inhosp_order(trunca, countzy, sum_date, anlilist, hiscode, ienddate, startdate);
+						cid=t_mc_inhosp_order.inhosp_order(cid,trunca, countzy, sum_date, anlilist, hiscode, ienddate, startdate);
 						T_mc_inhosp_patient.inhosp_patient(trunca, countzy, sum_date, anlilist, hiscode, ienddate, enddate, startdate);
 						t_mc_inhosp_temperature.inhosp_temperature(trunca, countzy, sum_date, anlilist, hiscode, ienddate, startdate);
 //					}
@@ -274,7 +292,7 @@ public class Date_to_Oracle {
 							pass_t_mc_outhosp_lab.outhosp_lab(trunca, countcy, sum_date, anlilist, hiscode, ienddate, startdate);
 						}
 						t_mc_outhosp_operation.outhosp_operation(trunca, countcy, sum_date, anlilist, hiscode, ienddate,enddate);
-						t_mc_outhosp_order.outhosp_order(trunca, countcy, sum_date, anlilist, hiscode, ienddate, startdate);
+						cid=t_mc_outhosp_order.outhosp_order(cid,trunca, countcy, sum_date, anlilist, hiscode, ienddate, startdate);
 						t_mc_outhosp_patient.outhosp_patient(trunca, countcy, sum_date, anlilist, hiscode, ienddate, enddate, startdate);
 						t_mc_outhosp_temperature.outhosp_temperature(trunca, countcy, sum_date, anlilist, hiscode, ienddate, startdate);
 //					}
@@ -284,6 +302,9 @@ public class Date_to_Oracle {
 			}
 		}
 		if(dict==1){
+			if(match_scheme.length>0){
+				clear_mc.cleardict();
+			}
 			System.out.println("开始导字典数据");
 			try {
 				for(int i=0;i<match_scheme.length;i++){
@@ -307,6 +328,15 @@ public class Date_to_Oracle {
 				System.out.println("字典表异常"+e);
 			}
 			System.out.println("导字典数据结束");
+			
+//			if(hiscodes.length>0){
+//				try {
+//					createtable.ceatedictview(hiscodes);
+//				} catch (ClassNotFoundException | SQLException | IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 		}
 	}
 }

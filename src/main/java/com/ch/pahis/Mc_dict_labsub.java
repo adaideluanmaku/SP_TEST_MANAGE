@@ -34,8 +34,8 @@ public class Mc_dict_labsub {
 		sql="select * from mc_dict_labsub where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_labsub where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_labsub where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_labsub( searchcode, itemname, is_save, match_scheme, itemcode, medshow_id, type_id) "
 				+ "values(?,?,?,?,?,?,?)";

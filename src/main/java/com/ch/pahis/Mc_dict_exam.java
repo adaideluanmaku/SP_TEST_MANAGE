@@ -34,8 +34,8 @@ public class Mc_dict_exam {
 		sql="select * from mc_dict_exam where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_exam where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_exam where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_exam(inserttime, searchcode, is_save, examname, examcode, match_scheme, type) "
 				+ "values(to_date(?, 'yyyy-mm-dd hh24:mi:ss'),?,?,?,?,?,?)";

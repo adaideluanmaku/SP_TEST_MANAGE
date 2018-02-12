@@ -81,17 +81,18 @@ public class T_mc_clinic_cost {
 				
 					//病原学检测
 					String itemcode=null;
+					String itemname=null;
 					List list_byx=null;
 					int IsTestEtiology=0;
 					if(Integer.parseInt(Patient.get("IsTestEtiology").toString())==1){
 						IsTestEtiology=3;
 					}
-					String sql1="select a.itemcode from mc_dict_costitem a ,mc_hospital_match_relation b where "
-							+ "a.match_scheme=b.costitemmatch_scheme and a.is_byx=? and b.hiscode_user=?";
+					String sql1="select a.itemcode,a.itemname from mc_dict_costitem a ,mc_hospital_match_relation b where "
+							+ "a.match_scheme=b.costitemmatch_scheme and a.is_byx=? and b.hiscode_user=? order by a.itemcode asc";
 					list_byx=jdbcTemplate_passpa2db.queryForList(sql1,new Object[]{IsTestEtiology,hiscode});
 					Map byx=(Map)list_byx.get(0);
 					itemcode=byx.get("itemcode").toString();
-					
+					itemname=byx.get("itemname").toString();
 					
 					//得到一个病人的所有的处方号，来制作非药品
 					for(int k=0;k<ScreenDrugs.size();k++){
@@ -127,6 +128,7 @@ public class T_mc_clinic_cost {
 							map.put("caseid", caseid);
 							map.put("prescnostr", prescnostr+"_非_1");//非药和药品不能再一个处方中
 							map.put("itemcode",itemcode);
+							map.put("itemname",itemname);
 							listbatch.add(map);
 							
 							if(a%500==0){
@@ -301,6 +303,7 @@ public class T_mc_clinic_cost {
 				String costtime1=map.get("costtime1").toString();
 				String prescnostr=map.get("prescnostr").toString();
 				String itemcode=map.get("itemcode").toString();
+				String itemname=map.get("itemname").toString();
 				try{
 					pst.setString(1,Patient.getString("DoctorName"));
 					pst.setString(2,Patient.getString("InHospNo"));//门诊/住院号
@@ -309,7 +312,7 @@ public class T_mc_clinic_cost {
 					pst.setInt(5,1);//is_use
 					pst.setString(6,"");//drugform
 					pst.setString(7,"审核/调配药师");//pharmacists
-					pst.setString(8,"急诊外科_医疗组");//itemname
+					pst.setString(8,itemname);//itemname
 					pst.setString(9,"");//routecode
 					pst.setString(10,"");//drugsccj
 					pst.setString(11,Patient.getString("DeptCode"));//deptcode

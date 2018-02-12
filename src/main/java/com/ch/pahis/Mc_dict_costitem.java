@@ -34,8 +34,8 @@ public class Mc_dict_costitem {
 		sql="select * from mc_dict_costitem where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_costitem where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_costitem where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_costitem( itemtype, searchcode, itemname, is_save, is_byx, match_scheme, itemcode) "
 				+ "values(?,?,?,?,?,?,?)";

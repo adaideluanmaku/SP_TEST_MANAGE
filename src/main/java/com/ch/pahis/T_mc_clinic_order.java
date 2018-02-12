@@ -38,11 +38,14 @@ public class T_mc_clinic_order {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void clinic_order(int trunca, int count, int sum_date,List anlilist,String hiscode,String ienddate){
+	public int clinic_order(int cidin,int trunca, int count, int sum_date,List anlilist,String hiscode,String ienddate){
+		int cid=cidin;
 		try {
 			String sql=null;
 			List listbatch=new ArrayList();
+			List prescnolist=new ArrayList();
 			
+			//插入非药品数据
 			sql="insert into t_mc_clinic_order (grouptag, orderstatus, doctorname, remark, clinicno, orderno, purpose,"
 					+ " singledose, frequency, drugform, routecode, deptcode, ordercode, deptname, caseid, "
 					+ "reasonable_desc, doctorcode, drug_unique_code, startdatetime, ordertype, presctype, "
@@ -52,8 +55,113 @@ public class T_mc_clinic_order {
 			int a=0;
 //			int b=0;
 			int iid=0;
-			int cid=0;
+//			int cid=0;
 			String ienddate1=ienddate;
+			String costtime1=ienddate;
+			for(int i=0;i<count;i++){
+				//数据分割，增加时间
+				if(i%(count/sum_date)==0 && i>0){
+					ienddate1=sys_pa.date1(ienddate1, "yyyyMMdd");
+					costtime1=sys_pa.date1(costtime1, "yyyy-MM-dd HH:mm:ss");
+				}
+				for(int j=0;j<anlilist.size();j++){
+					iid=iid+1;
+					JSONObject json=JSONObject.fromObject(anlilist.get(j));
+					JSONObject PassClient=json.getJSONObject("PassClient");
+					JSONObject Patient=json.getJSONObject("Patient");
+					JSONObject ScreenDrugList=json.getJSONObject("ScreenDrugList");
+					JSONArray ScreenDrugs=ScreenDrugList.getJSONArray("ScreenDrugs");
+					Patient.put("PatCode", hiscode+ienddate1+i+"_"+j+"_mz");
+//					Patient.put("InHospNo",hiscode+ienddate1+i+"_"+j);
+					Patient.put("InHospNo",hiscode+"_门诊_"+Patient.getString("InHospNo"));
+					//门诊caseid：Mz门诊号+“＿”＋病人编号
+					String caseid="Mz"+Patient.getString("PatCode");
+					
+					//病原学检测
+					String itemcode=null;
+					String itemname=null;
+					List list_byx=null;
+					int IsTestEtiology=0;
+					if(Integer.parseInt(Patient.get("IsTestEtiology").toString())==1){
+						IsTestEtiology=3;
+					}
+					String sql1="select a.itemcode,a.itemname from mc_dict_costitem a ,mc_hospital_match_relation b where "
+							+ "a.match_scheme=b.costitemmatch_scheme and a.is_byx=? and b.hiscode_user=? order by a.itemcode asc";
+					list_byx=jdbcTemplate_passpa2db.queryForList(sql1,new Object[]{IsTestEtiology,hiscode});
+					Map byx=(Map)list_byx.get(0);
+					itemcode=byx.get("itemcode").toString();
+					itemname=byx.get("itemname").toString();
+					
+					//得到一个病人的所有的处方号，来制作非药品
+					for(int k=0;k<ScreenDrugs.size();k++){
+						JSONObject ScreenDrug=ScreenDrugs.getJSONObject(k);
+						if(prescnolist.size()>0){
+							boolean rig=false;
+							for(int k1=0;k1<prescnolist.size();k1++){
+								String prescnostr=prescnolist.get(k1).toString();
+								if(ScreenDrug.get("RecipNo").equals(prescnostr)){
+									rig=true;//表示存在重复的处方
+								}
+							}
+							if(!rig){//表示存在重复的处方，不在新增
+								prescnolist.add(ScreenDrug.get("RecipNo"));
+							}
+						}else{
+							prescnolist.add(ScreenDrug.get("RecipNo"));
+						}
+					}
+					
+					if(prescnolist.size()>0){
+						for(int k1=0;k1<prescnolist.size();k1++){
+							cid=cid+1;
+							a=a+1;
+							if(a%2000==0){
+								System.out.println("t_mc_clinic_order 非药--"+a);
+							}
+							String prescnostr=prescnolist.get(k1).toString();
+							Map map=new HashMap();
+							map.put("iid", iid);
+							map.put("cid",cid);
+							map.put("Patient", Patient);
+							map.put("HospID", PassClient.getString("HospID"));
+							map.put("costtime1", costtime1);
+							map.put("caseid", caseid);
+							map.put("prescnostr", prescnostr+"_非_1");//非药和药品不能再一个处方中
+							map.put("itemcode",itemcode);
+							map.put("itemname",itemname);
+							listbatch.add(map);
+							
+							if(a%500==0){
+								batchInsertRows(sql,listbatch);
+								listbatch.clear();
+							}
+							
+							break;
+						}
+						prescnolist.clear();
+					}
+					
+				}
+			}
+			if(listbatch.size()>0){
+				batchInsertRows(sql,listbatch);
+				listbatch.clear();
+			}
+			System.out.println("t_mc_clinic_order非药总数："+a+"-->有效数据："+a);
+			
+			
+			//插入药品数据
+			sql="insert into t_mc_clinic_order (grouptag, orderstatus, doctorname, remark, clinicno, orderno, purpose,"
+					+ " singledose, frequency, drugform, routecode, deptcode, ordercode, deptname, caseid, "
+					+ "reasonable_desc, doctorcode, drug_unique_code, startdatetime, ordertype, presctype, "
+					+ "routename, cost, cid, drugspec, num, days, patientid, prescno, hiscode, ordername, "
+					+ "groupstate, doseunit, numunit, is_allow) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?"
+					+ ",?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			a=0;
+//			b=0;
+			iid=0;
+//			cid=0;
+			ienddate1=ienddate;
 			for(int i=0;i<count;i++){
 				//数据分割，增加时间
 				if(i%(count/sum_date)==0 && i>0){
@@ -138,7 +246,7 @@ public class T_mc_clinic_order {
 						listbatch.add(map);
 						
 						if(a%500==0){
-							batchInsertRows(sql,listbatch);
+							batchInsertRows1(sql,listbatch);
 							listbatch.clear();
 						} 
 						
@@ -160,17 +268,87 @@ public class T_mc_clinic_order {
 				}
 			}
 			if(listbatch.size()>0){
-				batchInsertRows(sql,listbatch);
+				batchInsertRows1(sql,listbatch);
 				listbatch.clear();
 			}
-			System.out.println("t_mc_clinic_order总数："+a+"-->有效数据："+a);
+			System.out.println("t_mc_clinic_order药品总数："+a+"-->有效数据："+a);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("t_mc_clinic_order制造数据异常:"+e);
 		}
+		
+		return cid;
 	}
 	
 	public void batchInsertRows(String sql, final List listbatch) throws Exception {
+		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement pst, int i) {
+				Map map=(Map)listbatch.get(i);
+				JSONObject Patient=JSONObject.fromObject(map.get("Patient"));
+				String HospID=map.get("HospID").toString();
+				int iid=Integer.parseInt(map.get("iid").toString());
+				int cid=Integer.parseInt(map.get("cid").toString());
+				String caseid=map.get("caseid").toString();
+				String costtime1=map.get("costtime1").toString();
+				String prescnostr=map.get("prescnostr").toString();
+				String itemcode=map.get("itemcode").toString();
+				String itemname=map.get("itemname").toString();
+				
+				try{
+					pst.setString(1,"");//grouptag
+					pst.setInt(2,0);//orderstatus
+					pst.setString(3,Patient.getString("DoctorName"));//doctorname
+					pst.setString(4,"");//remark
+					pst.setString(5,Patient.getString("InHospNo"));//clinicno
+					pst.setInt(6,cid);//orderno
+					pst.setInt(7,0);//purpose
+					pst.setString(8,"");//singledose
+					pst.setString(9,"");//frequency
+					pst.setString(10,"");//drugform
+					pst.setString(11,"");//routecode
+					pst.setString(12,Patient.getString("DeptCode"));//deptcode
+					pst.setString(13,itemcode);//ordercode
+					pst.setString(14,Patient.getString("DeptName"));//deptname
+					pst.setString(15,caseid);//caseid
+					pst.setString(16,"合理越权描述");//reasonable_desc
+					pst.setString(17,Patient.getString("DoctorCode"));//doctorcode
+					pst.setString(18,itemcode);//drug_unique_code
+					pst.setString(19,costtime1);//startdatetime
+					pst.setInt(20,3);//ordertype
+					pst.setInt(21,0);//presctype
+					pst.setString(22,"");//routename
+					pst.setInt(23,100);//cost
+					pst.setInt(24,cid);//cid
+					pst.setString(25,"");//drugspec
+					pst.setInt(26,1);//num
+					pst.setInt(27,0);//days
+					pst.setString(28,Patient.getString("PatCode"));//patientid
+					if("".equals(strisnull.isnull(prescnostr))){
+						pst.setInt(29,iid);//prescno
+					}else{
+						pst.setString(29,prescnostr);//prescno
+					}
+					pst.setString(30,HospID);//hiscode
+					pst.setString(31,itemname);//ordername
+					pst.setInt(32,1);//groupstate
+					pst.setString(33,"");//doseunit
+					pst.setString(34,"");//numunit
+					pst.setInt(35,0);//is_allow
+				}catch (Exception e){
+					System.out.println("出现异常的数据:"+map);
+					System.out.println(e);
+				}
+			}
+			@Override
+			public int getBatchSize() {
+				//这个方法设定更新记录数，通常List里面存放的都是我们要更新的，所以返回list.size();  
+				return listbatch.size();
+			}
+		};
+		jdbcTemplate_oracle.batchUpdate(sql, setter);
+	}
+	
+	public void batchInsertRows1(String sql, final List listbatch) throws Exception {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) {
 				Map map=(Map)listbatch.get(i);

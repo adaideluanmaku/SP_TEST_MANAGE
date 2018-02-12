@@ -35,8 +35,8 @@ public class Mc_dict_allergen {
 		sql="select * from mc_dict_allergen where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_allergen where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_allergen where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_allergen(searchcode, allercode, match_user, pass_allertype, is_save, "
 				+ "pass_allerid, allername, match_scheme, match_time, unable_match_desc, unable_match, pass_allername) "

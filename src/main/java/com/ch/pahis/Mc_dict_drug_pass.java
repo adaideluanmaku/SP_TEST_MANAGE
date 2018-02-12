@@ -34,8 +34,8 @@ public class Mc_dict_drug_pass {
 		sql="select * from mc_dict_drug_pass where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_drug_pass where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_drug_pass where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_drug_pass(searchcode, oprpi_time, match_scheme, pass_drugname, "
 				+ "comp_name, menulabel, drugname, drugform, drugcode, pass_drugcode, pass_upstate, proid, "

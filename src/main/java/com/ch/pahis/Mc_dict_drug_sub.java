@@ -34,8 +34,8 @@ public class Mc_dict_drug_sub {
 		sql="select * from mc_dict_drug_sub where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_drug_sub where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_drug_sub where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_drug_sub(searchcode, dddunit, ddd, is_save, state, adddate, match_scheme, "
 				+ "is_use, drugname, drugspec, ddd_costunit, inserttime, drugform, drugcode, costunit) "

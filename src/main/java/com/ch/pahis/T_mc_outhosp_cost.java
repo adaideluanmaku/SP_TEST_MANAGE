@@ -76,16 +76,18 @@ public class T_mc_outhosp_cost {
 				
 					//病原学检测
 					String itemcode=null;
+					String itemname=null;
 					List list_byx=null;
 					int IsTestEtiology=0;
 					if(Integer.parseInt(Patient.get("IsTestEtiology").toString())==1){
 						IsTestEtiology=3;
 					}
-					String sql1="select a.itemcode from mc_dict_costitem a ,mc_hospital_match_relation b where "
-							+ "a.match_scheme=b.costitemmatch_scheme and a.is_byx=? and b.hiscode_user=?";
+					String sql1="select a.itemcode,a.itemname from mc_dict_costitem a ,mc_hospital_match_relation b where "
+							+ "a.match_scheme=b.costitemmatch_scheme and a.is_byx=? and b.hiscode_user=?  order by a.itemcode asc";
 					list_byx=jdbcTemplate_passpa2db.queryForList(sql1,new Object[]{IsTestEtiology,hiscode});
 					Map byx=(Map)list_byx.get(0);
 					itemcode=byx.get("itemcode").toString();
+					itemname=byx.get("itemname").toString();
 					
 					Map map=new HashMap();
 					map.put("iid", iid);
@@ -94,6 +96,7 @@ public class T_mc_outhosp_cost {
 					map.put("costtime1", costtime1);
 					map.put("caseid", caseid);
 					map.put("itemcode",itemcode);
+					map.put("itemname",itemname);
 					listbatch.add(map);
 					
 					if(a%500==0){
@@ -261,6 +264,8 @@ public class T_mc_outhosp_cost {
 				String caseid=map.get("caseid").toString();
 				String costtime1=map.get("costtime1").toString();
 				String itemcode=map.get("itemcode").toString();
+				String itemname=map.get("itemname").toString();
+				
 				try{
 					pst.setString(1,Patient.getString("DoctorName"));//[doctorname
 					pst.setInt(2,iid);//自增长字段
@@ -270,7 +275,7 @@ public class T_mc_outhosp_cost {
 					pst.setString(6,"");//drugform
 					pst.setInt(7,0);//is_out，和药品表对应
 					pst.setString(8,"");//routecode
-					pst.setString(9,"急诊外科_医疗组");//itemname
+					pst.setString(9,itemname);//itemname
 					pst.setString(10,Patient.getString("VisitCode"));//visitid
 					pst.setString(11,"");//drugsccj
 					pst.setString(12,Patient.getString("DeptCode"));//deptcode

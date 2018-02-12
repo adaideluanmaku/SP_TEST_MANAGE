@@ -493,7 +493,7 @@ public class TestmngAction {
 //		};
 		String match_scheme1=req.getParameter("match_scheme1");
 		int createTB1=Integer.parseInt(req.getParameter("createTB1"));
-		//默认=0制作PA数据，=1制作PASS数据
+		//默认=0制作PA数据，=1制作PASS数据(应该是制作肝肾检验值数据使用)
 		int passorpa_hisdata1=Integer.parseInt(req.getParameter("passorpa_hisdata1"));
 		
 		date_to_Oracle.Rundate(hiscodes1, datetime1, sum_date1, count1, mz1, zy1, cy1, dict1, createview1, 

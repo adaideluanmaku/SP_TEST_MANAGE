@@ -34,8 +34,8 @@ public class Mc_dict_dept {
 		sql="select * from mc_dict_dept where match_scheme=? and deptcode<>'-1'";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_dept where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_dept where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_dept( searchcode, deptcode, is_save, is_inhosp, match_scheme, "
 				+ "is_emergency, deptname, is_clinic) values(?,?,?,?,?,?,?,?)";

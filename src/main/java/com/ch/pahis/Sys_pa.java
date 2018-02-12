@@ -45,7 +45,8 @@ public class Sys_pa {
 		}
 		cal = Calendar.getInstance();   
         cal.setTime(time);   
-        cal.add(Calendar.DATE, a/b-new Random().nextInt(10)); //通过calendar方法计算天数加减法，例如：1或者-1
+//        cal.add(Calendar.DATE, a/b-new Random().nextInt(10)); //通过calendar方法计算天数加减法，例如：1或者-1
+        cal.add(Calendar.DATE, a/b-5);
         datestr=sdf.format(cal.getTime());
         
         return datestr;

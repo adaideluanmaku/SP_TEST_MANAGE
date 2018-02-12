@@ -349,9 +349,11 @@
 			</tr>
 			<tr>
 				<td style="text-align: left;">
-					<div id="file_div">上传 : 
+					<div id="file_div">
+					<span>上传 : </span>
 					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="files_button()">选择图片</a>
 					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="scriptsearchfile()">查看图片</a>
+					<span>新的脚本需要保存后才能上传图片</span>
 					</div>
 				</td >
 			</tr>

@@ -34,8 +34,8 @@ public class Mc_dict_frequency {
 		sql="select * from mc_dict_frequency where match_scheme=?";
 		list=jdbcTemplate_passpa2db.queryForList(sql,new Object[]{match_scheme});
 		
-		sql="delete from mc_dict_frequency where match_scheme=?";
-		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
+//		sql="delete from mc_dict_frequency where match_scheme=?";
+//		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
 		sql="insert into mc_dict_frequency(pharmfrequency, days, times, is_save, match_desc, "
 				+ "match_scheme, frequency, unable_match) values(?,?,?,?,?,?,?,?)";
