@@ -26,7 +26,7 @@ public class Mc_dict_drug_sub {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_drug_sub(int match_scheme) throws Exception{
+	public void dict_drug_sub(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,12 +37,23 @@ public class Mc_dict_drug_sub {
 //		sql="delete from mc_dict_drug_sub where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+//		sql="insert into mc_dict_drug_sub(searchcode, dddunit, ddd, is_save, state, adddate, match_scheme, "
+//				+ "is_use, drugname, drugspec, ddd_costunit, inserttime, drugform, drugcode, costunit) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1609版
+//		sql="insert into mc_dict_drug_sub(searchcode, dddunit, ddd, is_save, state, adddate, match_scheme, "
+//				+ "is_use, drugname, drugspec, ddd_costunit, drugform, drugcode, costunit , inserttime) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_drug_sub(searchcode, dddunit, ddd, is_save, state, adddate, match_scheme, "
-				+ "is_use, drugname, drugspec, ddd_costunit, inserttime, drugform, drugcode, costunit) "
-				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "is_use, drugname, drugspec, ddd_costunit, drugform, drugcode, costunit , updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
-			
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -61,6 +72,8 @@ public class Mc_dict_drug_sub {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
+				
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("dddunit")).toString());//dddunit
@@ -73,10 +86,10 @@ public class Mc_dict_drug_sub {
 					pst.setString(9,strisnull.isnull(map.get("drugname")).toString());//drugname
 					pst.setString(10,strisnull.isnull(map.get("drugspec")).toString());//drugspec
 					pst.setString(11,strisnull.isnull(map.get("ddd_costunit")).toString());//ddd_costunit
-					pst.setString(12,strisnull.isnull(map.get("inserttime")).toString());//inserttime
-					pst.setString(13,strisnull.isnull(map.get("drugform")).toString());//drugform
-					pst.setString(14,strisnull.isnull(map.get("drugcode")).toString());//drugcode
-					pst.setString(15,strisnull.isnull(map.get("costunit")).toString());//costunit
+					pst.setString(12,strisnull.isnull(map.get("drugform")).toString());//drugform
+					pst.setString(13,strisnull.isnull(map.get("drugcode")).toString());//drugcode
+					pst.setString(14,strisnull.isnull(map.get("costunit")).toString());//costunit
+					pst.setString(15,strisnull.isnull(startdate));//inserttime
 				}catch(Exception e){
 					System.out.println("mc_dict_drug_sub出现异常的数据:"+map);
 					System.out.println(e);

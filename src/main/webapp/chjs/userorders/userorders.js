@@ -717,7 +717,7 @@ $(document).ready(function(){
 					type:'textbox',
 				}
 	        },
-	        {field:'RouteSource',title:'手术预防使用抗菌药物疗程',width:100,align:'center',
+	        {field:'RouteSource',title:'给药途径来源',width:100,align:'center',
 	        	editor:{
 					type:'textbox',
 				}
@@ -732,7 +732,7 @@ $(document).ready(function(){
 					type:'textbox',
 				}
 	        },
-	        {field:'FreqSource',title:'手术预防使用抗菌药物疗程',width:100,align:'center',
+	        {field:'FreqSource',title:'频次来源',width:100,align:'center',
 	        	editor:{
 					type:'textbox',
 				}
@@ -2366,8 +2366,8 @@ function str_to_json(){
 	var ScreenOperations=new Array();
 	for(var i=0;i<oprrows.length;i++){
 		var oprrow=oprrows[i];
-		oprrow["DisTimeType"]=parseInt(oprrow.OprMediTime);
-		oprrow["Ishospinfection"]=parseInt(oprrow.OprTreatTime);
+		oprrow["OprMediTime"]=parseInt(oprrow.OprMediTime);
+		oprrow["OprTreatTime"]=parseInt(oprrow.OprTreatTime);
 		ScreenOperations[i]=oprrow;
 	}
 	ScreenOperationList["ScreenOperations"] = ScreenOperations;

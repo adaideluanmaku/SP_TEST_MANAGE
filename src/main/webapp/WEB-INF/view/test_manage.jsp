@@ -197,9 +197,9 @@
 					    <option value="-1" selected="selected">无法获取肝损害状态</option>   
 					    <option value="0">无肝损害</option>   
 					    <option value="1">存在肝损害，但损害程度不明确</option> 
-					    <option value="3">轻度肝损害</option>   
-					    <option value="4">中度肝损害</option>
-					    <option value="5">重度肝损害</option>   
+					    <option value="2">轻度肝损害</option>   
+					    <option value="3">中度肝损害</option>
+					    <option value="4">重度肝损害</option>   
 					</select> 
 				</td>
 				<td>
@@ -208,9 +208,9 @@
 					    <option value="-1" selected="selected">无法获取肾损害状态</option>   
 					    <option value="0">无肾损害</option>   
 					    <option value="1">存在肾损害，但损害程度不明确</option> 
-					    <option value="3">轻度肾损害</option>   
-					    <option value="4">中度肾损害</option>
-					    <option value="5">重度肾损害</option>   
+					    <option value="2">轻度肾损害</option>   
+					    <option value="3">中度肾损害</option>
+					    <option value="4">重度肾损害</option>   
 					</select> 
 				</td>
 				<td>

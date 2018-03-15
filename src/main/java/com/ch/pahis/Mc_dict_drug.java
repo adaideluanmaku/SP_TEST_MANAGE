@@ -26,7 +26,7 @@ public class Mc_dict_drug {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_drug(int match_scheme) throws Exception{
+	public void dict_drug(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,15 +37,29 @@ public class Mc_dict_drug {
 //		sql="delete from mc_dict_drug where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_drug(searchcode, is_bisection_use, operuser, is_save, drugformtype, "
+//				+ "jdmtype, state, druggroupcode, match_scheme, is_bloodmed, socialsecurity_ratio, "
+//				+ "drugtype, drugname, drugform, drugcode, stimulantingred, is_anti, antilevel, antitype, "
+//				+ "is_basedrug_p, classid, druggroupname, is_socialsecurity, is_sugarmed, is_stimulant, "
+//				+ "classtitle, is_basedrug, is_dearmed, high_alert_level, is_srpreparations, is_needskintest, "
+//				+ "socialsecurity_desc, typename, is_solvent, is_poison, otctype, opertime, drggrp_searchcode) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_drug(searchcode, is_bisection_use, operuser, is_save, drugformtype, "
 				+ "jdmtype, state, druggroupcode, match_scheme, is_bloodmed, socialsecurity_ratio, "
 				+ "drugtype, drugname, drugform, drugcode, stimulantingred, is_anti, antilevel, antitype, "
 				+ "is_basedrug_p, classid, druggroupname, is_socialsecurity, is_sugarmed, is_stimulant, "
 				+ "classtitle, is_basedrug, is_dearmed, high_alert_level, is_srpreparations, is_needskintest, "
-				+ "socialsecurity_desc, typename, is_solvent, is_poison, otctype, opertime, drggrp_searchcode) "
-				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "socialsecurity_desc, typename, is_solvent, is_poison, otctype, opertime, drggrp_searchcode, "
+				+ "updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+				+ "to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -64,6 +78,7 @@ public class Mc_dict_drug {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				
 //				System.out.println(map.get("drugcode").toString());
 				try{
@@ -105,6 +120,7 @@ public class Mc_dict_drug {
 					pst.setString(36,strisnull.isnull(map.get("otctype")).toString());//otctype
 					pst.setString(37,strisnull.isnull(map.get("opertime")).toString());//opertime
 					pst.setString(38,strisnull.isnull(map.get("drggrp_searchcode")).toString());//drggrp_searchcode
+					pst.setString(39,strisnull.isnull(startdate));//updatedate
 				}catch(Exception e){
 					System.out.println("mc_dict_drug出现异常的数据:"+map);
 					System.out.println(e);

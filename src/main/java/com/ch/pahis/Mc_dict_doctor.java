@@ -26,7 +26,7 @@ public class Mc_dict_doctor {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_doctor(int match_scheme) throws Exception{
+	public void dict_doctor(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,14 +37,22 @@ public class Mc_dict_doctor {
 //		sql="delete from mc_dict_doctor where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_doctor(searchcode, doctorlevel, doctorname, ilevel, doctorcode, deptcode, "
+//				+ "is_save, antilevel, match_scheme, prespriv, password, deptname, is_clinic) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_doctor(searchcode, doctorlevel, doctorname, ilevel, doctorcode, deptcode, "
-				+ "is_save, antilevel, match_scheme, prespriv, password, deptname, is_clinic) "
-				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "is_save, antilevel, match_scheme, prespriv, password, deptname, is_clinic,updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
 			if("".equals(strisnull.isnull(map.get("doctorcode")))){
 				continue;
 			}
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -63,6 +71,8 @@ public class Mc_dict_doctor {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
+				
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("doctorlevel")).toString());//doctorlevel
@@ -77,6 +87,7 @@ public class Mc_dict_doctor {
 					pst.setString(11,strisnull.isnull(map.get("password")).toString());//password
 					pst.setString(12,strisnull.isnull(map.get("deptname")).toString());//deptname
 					pst.setString(13,strisnull.isnull(map.get("is_clinic")).toString());//is_clinic
+					pst.setString(14,strisnull.isnull(startdate));//updatedate
 				}catch(Exception e){
 					System.out.println("mc_dict_doctor出现异常的数据:"+map);
 					System.out.println(e);

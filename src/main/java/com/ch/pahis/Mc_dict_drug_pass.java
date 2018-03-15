@@ -26,7 +26,7 @@ public class Mc_dict_drug_pass {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_drug_pass(int match_scheme) throws Exception{
+	public void dict_drug_pass(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,14 +37,25 @@ public class Mc_dict_drug_pass {
 //		sql="delete from mc_dict_drug_pass where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_drug_pass(searchcode, oprpi_time, match_scheme, pass_drugname, "
+//				+ "comp_name, menulabel, drugname, drugform, drugcode, pass_drugcode, pass_upstate, proid, "
+//				+ "pass_approvalcode, pass_form_name, match_time, unable_match_desc, unable_match, pass_st_strength,"
+//				+ " match_user, drug_unique_code, approvalcode, pass_dividend, pass_divisor, pass_st_comp_name, "
+//				+ "drugspec, oprpi_user, pass_doseunit, pass_nametype, doseunit) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+//				+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_drug_pass(searchcode, oprpi_time, match_scheme, pass_drugname, "
 				+ "comp_name, menulabel, drugname, drugform, drugcode, pass_drugcode, pass_upstate, proid, "
 				+ "pass_approvalcode, pass_form_name, match_time, unable_match_desc, unable_match, pass_st_strength,"
 				+ " match_user, drug_unique_code, approvalcode, pass_dividend, pass_divisor, pass_st_comp_name, "
-				+ "drugspec, oprpi_user, pass_doseunit, pass_nametype, doseunit) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-				+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "drugspec, oprpi_user, pass_doseunit, pass_nametype, doseunit,updatedate) "
+				+ " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -63,6 +74,7 @@ public class Mc_dict_drug_pass {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("oprpi_time")).toString());//oprpi_time
@@ -97,7 +109,7 @@ public class Mc_dict_drug_pass {
 					pst.setString(27,strisnull.isnull(map.get("pass_doseunit")).toString());//pass_doseunit
 					pst.setString(28,strisnull.isnull(map.get("pass_nametype")).toString());//pass_nametype
 					pst.setString(29,strisnull.isnull(map.get("doseunit")).toString());//doseunit
-					
+					pst.setString(30,strisnull.isnull(startdate));//updatedate
 				}catch(Exception e){
 					System.out.println("mc_dict_drug_pass出现异常的数据:"+map);
 					System.out.println(e);

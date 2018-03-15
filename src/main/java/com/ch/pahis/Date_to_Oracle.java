@@ -186,6 +186,7 @@ public class Date_to_Oracle {
 				e.printStackTrace();
 			}
 		}
+		
 		//清理业务表
 		if(trunca==1){
 			clear_mc.cleardate();
@@ -196,7 +197,9 @@ public class Date_to_Oracle {
 			if(StringUtils.isNotBlank(hiscodes[0])){
 //				createView.createV(hiscodes[0]);
 				try {
+					//创建业务视图
 					createtable.ceateview();
+					//创建字典表视图
 					createtable.ceatedictview(hiscodes);
 				} catch (ClassNotFoundException | SQLException | IOException e) {
 					// TODO Auto-generated catch block
@@ -308,20 +311,20 @@ public class Date_to_Oracle {
 			System.out.println("开始导字典数据");
 			try {
 				for(int i=0;i<match_scheme.length;i++){
-					mc_dict_allergen.dict_allergen(Integer.parseInt(match_scheme[i]));
-					mc_dict_costitem.dict_costitem(Integer.parseInt(match_scheme[i]));
-					mc_dict_dept.dict_dept(Integer.parseInt(match_scheme[i]));
-					mc_dict_disease.dict_disease(Integer.parseInt(match_scheme[i]));
-					mc_dict_doctor.dict_doctor(Integer.parseInt(match_scheme[i]));
-					mc_dict_drug_pass.dict_drug_pass(Integer.parseInt(match_scheme[i]));
-					mc_dict_drug_sub.dict_drug_sub(Integer.parseInt(match_scheme[i]));
-					mc_dict_drug.dict_drug(Integer.parseInt(match_scheme[i]));
-					mc_dict_exam.dict_exam(Integer.parseInt(match_scheme[i]));
-					mc_dict_frequency.dict_frequency(Integer.parseInt(match_scheme[i]));
-					mc_dict_lab.dict_lab(Integer.parseInt(match_scheme[i]));
-					mc_dict_labsub.dict_labsub(Integer.parseInt(match_scheme[i]));
-					mc_dict_operation.dict_operation(Integer.parseInt(match_scheme[i]));
-					mc_dict_route.dict_route(Integer.parseInt(match_scheme[i]));
+					mc_dict_allergen.dict_allergen(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_costitem.dict_costitem(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_dept.dict_dept(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_disease.dict_disease(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_doctor.dict_doctor(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_drug_pass.dict_drug_pass(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_drug_sub.dict_drug_sub(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_drug.dict_drug(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_exam.dict_exam(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_frequency.dict_frequency(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_lab.dict_lab(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_labsub.dict_labsub(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_operation.dict_operation(Integer.parseInt(match_scheme[i]), startdate);
+					mc_dict_route.dict_route(Integer.parseInt(match_scheme[i]), startdate);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

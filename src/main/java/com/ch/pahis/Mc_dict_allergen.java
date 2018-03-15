@@ -27,7 +27,7 @@ public class Mc_dict_allergen {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_allergen(int match_scheme) throws Exception{
+	public void dict_allergen(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -38,11 +38,20 @@ public class Mc_dict_allergen {
 //		sql="delete from mc_dict_allergen where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_allergen(searchcode, allercode, match_user, pass_allertype, is_save, "
+//				+ "pass_allerid, allername, match_scheme, match_time, unable_match_desc, unable_match, pass_allername) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_allergen(searchcode, allercode, match_user, pass_allertype, is_save, "
-				+ "pass_allerid, allername, match_scheme, match_time, unable_match_desc, unable_match, pass_allername) "
-				+ "values(?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "pass_allerid, allername, match_scheme, match_time, unable_match_desc, unable_match, "
+				+ "pass_allername , updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -61,7 +70,7 @@ public class Mc_dict_allergen {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
-				
+				String startdate=map.get("updatedate").toString();
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("allercode")).toString());//allercode
@@ -75,6 +84,7 @@ public class Mc_dict_allergen {
 					pst.setString(10,strisnull.isnull(map.get("unable_match_desc")).toString());//unable_match_desc
 					pst.setInt(11,Integer.parseInt(strisnull.isnull(map.get("unable_match")).toString()));//unable_match
 					pst.setString(12,strisnull.isnull(map.get("pass_allername")).toString());//pass_allername
+					pst.setString(13,strisnull.isnull(startdate));//updatedate
 					
 				}catch(Exception e){
 					System.out.println("mc_dict_allergen出现异常的数据:"+map);

@@ -26,7 +26,7 @@ public class Mc_dict_costitem {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_costitem(int match_scheme) throws Exception{
+	public void dict_costitem(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,10 +37,17 @@ public class Mc_dict_costitem {
 //		sql="delete from mc_dict_costitem where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
-		sql="insert into mc_dict_costitem( itemtype, searchcode, itemname, is_save, is_byx, match_scheme, itemcode) "
-				+ "values(?,?,?,?,?,?,?)";
+		//1609版
+//		sql="insert into mc_dict_costitem( itemtype, searchcode, itemname, is_save, is_byx, match_scheme, itemcode) "
+//				+ "values(?,?,?,?,?,?,?)";
+		//1712版
+		sql="insert into mc_dict_costitem( itemtype, searchcode, itemname, is_save, is_byx, match_scheme, itemcode"
+				+ " , updatedate) "
+				+ "values(?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -59,6 +66,7 @@ public class Mc_dict_costitem {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				
 				try{
 					pst.setString(1,strisnull.isnull(map.get("itemtype")).toString());//itemtype
@@ -68,6 +76,7 @@ public class Mc_dict_costitem {
 					pst.setString(5,strisnull.isnull(map.get("is_byx")).toString());//is_byx
 					pst.setString(6,strisnull.isnull(map.get("match_scheme")).toString());//match_scheme
 					pst.setString(7,strisnull.isnull(map.get("itemcode")).toString());//itemcode
+					pst.setString(8,strisnull.isnull(startdate));//updatedate
 				}catch(Exception e){
 					System.out.println("mc_dict_costitem出现异常的数据:"+map);
 					System.out.println(e);

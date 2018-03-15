@@ -793,35 +793,35 @@ public class Pabean {
 	}
 	
 	//医生字典表
-		public DataGrid user_labitem(HttpServletRequest req){
-			String limit=null;
-			int page=0;
-			int total=0;
-			DataGrid datagrid=new DataGrid();
-			page=Integer.parseInt(req.getParameter("page"));
-			total=Integer.parseInt(req.getParameter("rows"));
-			limit="limit "+(page*total-total)+","+total;
-			
-			String sql=null;
-			List rslist=null;
-			String itemcode=null;
-			if(StringUtils.isBlank(req.getParameter("itemcode"))){
-				itemcode="";
-			}else{
-				itemcode=req.getParameter("itemcode");
-			}
-			
-			sql="select b.hisname,a.itemcode,a.itemname,a.labeldesc,a.`range`,a.unit,a.labeltypedesc from mc_user_labitem a, "
-					+ "mc_hospital_match_relation b where a.mhiscode=b.mhiscode "
-					+ "and a.itemcode like ? order by a.itemcode asc "+limit;
-			rslist=jdbcTemplate_passpa2db.queryForList(sql, new Object[]{"%"+itemcode+"%"});
-			datagrid.setRows(rslist);
-			
-			sql="select count(a.itemcode) from mc_user_labitem a, "
-					+ "mc_hospital_match_relation b where a.mhiscode=b.mhiscode and a.itemcode like ? ";
-			total=jdbcTemplate_passpa2db.queryForObject(sql, Integer.class, new Object[]{"%"+itemcode+"%"});
-			datagrid.setTotal(total+0L);
-			
-			return datagrid;
+	public DataGrid user_labitem(HttpServletRequest req){
+		String limit=null;
+		int page=0;
+		int total=0;
+		DataGrid datagrid=new DataGrid();
+		page=Integer.parseInt(req.getParameter("page"));
+		total=Integer.parseInt(req.getParameter("rows"));
+		limit="limit "+(page*total-total)+","+total;
+		
+		String sql=null;
+		List rslist=null;
+		String itemcode=null;
+		if(StringUtils.isBlank(req.getParameter("itemcode"))){
+			itemcode="";
+		}else{
+			itemcode=req.getParameter("itemcode");
 		}
+		
+		sql="select b.hisname,a.itemcode,a.itemname,a.labeldesc,a.`range`,a.unit,a.labeltypedesc from mc_user_labitem a, "
+				+ "mc_hospital_match_relation b where a.mhiscode=b.mhiscode "
+				+ "and a.itemcode like ? order by a.itemcode asc "+limit;
+		rslist=jdbcTemplate_passpa2db.queryForList(sql, new Object[]{"%"+itemcode+"%"});
+		datagrid.setRows(rslist);
+		
+		sql="select count(a.itemcode) from mc_user_labitem a, "
+				+ "mc_hospital_match_relation b where a.mhiscode=b.mhiscode and a.itemcode like ? ";
+		total=jdbcTemplate_passpa2db.queryForObject(sql, Integer.class, new Object[]{"%"+itemcode+"%"});
+		datagrid.setTotal(total+0L);
+		
+		return datagrid;
+	}
 }

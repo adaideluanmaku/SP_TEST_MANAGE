@@ -191,7 +191,8 @@ $(document).ready(function(){
 	new pagecss(1,pagecount,jsonobj);//初始加载生成表,如果有on事件绑定，需要将代码放在表格生成之后
 	
 	//浮动提示窗口-触发事件
-	$(".data div span").on("mouseover mouseout",function(){ 
+//	$(".data div span").on("mouseover mouseout",function(){ 
+	$(document).on("mouseover mouseout",".data div span",function(){ 
 //		if(event.type == "mouseover"){//鼠标悬浮
 //			alert(1);
 //		}else if(event.type == "mouseout"){//鼠标离开
@@ -200,12 +201,22 @@ $(document).ready(function(){
 		
 		if(event.type == "mouseover"){//鼠标悬浮
 			if($(this).text().length>10){//浮动窗口
-				$(".pagetable").append('<div id="title" style="max-width:200px;position: absolute;top:0px;left:0px;background-color: #fff2e8;/*自动换行*/	word-wrap: break-word;border: 1px solid #c0c0c0;"></div>');
+				$("pagetable").append('<div id="title" style="max-width:400px;max-height:200px;position: absolute;'
+						+'top:0px;left:0px;background-color: #fff2e8;/*自动换行*/	word-wrap: break-word;' 
+						+'overflow: hidden;text-overflow: ellipsis;'
+						+'border: 1px solid #c0c0c0;"></div>');
 				$(this).mousemove(function(e) { 
 					var xx = e.originalEvent.x || e.originalEvent.layerX || 0; 
 					var yy = e.originalEvent.y || e.originalEvent.layerY || 0; 
-					$("#title").css("left",xx+20+"px");
-					$("#title").css("top",yy+15+"px");
+					//如果提示框在body最下面超过页面高度，则靠上显示
+					var bodyheight=document.body.offsetHeight;
+					if((yy+10+200)<bodyheight){
+						$("#title").css("left",xx+20+"px");
+						$("#title").css("top",yy+10+"px");
+					}else{
+						$("#title").css("left",xx+20+"px");
+						$("#title").css("top",yy+10-200+"px");
+					}
 					$("#title").text($(this).text());
 				}); 
 			}

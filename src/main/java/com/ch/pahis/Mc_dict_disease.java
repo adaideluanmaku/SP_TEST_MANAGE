@@ -26,7 +26,7 @@ public class Mc_dict_disease {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_disease(int match_scheme) throws Exception{
+	public void dict_disease(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,11 +37,21 @@ public class Mc_dict_disease {
 //		sql="delete from mc_dict_disease where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_disease(searchcode, typecode, match_user, is_save,  is_mxb, "
+//				+ "match_scheme, disname, pass_icd_code, pass_icd_name, dis_type, discode, typename, "
+//				+ "match_time, unable_match_desc, unable_match) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		//1712版
 		sql="insert into mc_dict_disease(searchcode, typecode, match_user, is_save,  is_mxb, "
 				+ "match_scheme, disname, pass_icd_code, pass_icd_name, dis_type, discode, typename, "
-				+ "match_time, unable_match_desc, unable_match) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "match_time, unable_match_desc, unable_match, updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
+			
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -60,6 +70,8 @@ public class Mc_dict_disease {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
+				
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("typecode")).toString());//typecode
@@ -76,6 +88,8 @@ public class Mc_dict_disease {
 					pst.setString(13,strisnull.isnull(map.get("match_time")).toString());//match_time
 					pst.setString(14,strisnull.isnull(map.get("unable_match_desc")).toString());//unable_match_desc
 					pst.setString(15,strisnull.isnull(map.get("unable_match")).toString());//unable_match
+					pst.setString(16,strisnull.isnull(startdate));//updatedate
+					
 				}catch(Exception e){
 					System.out.println("mc_dict_disease出现异常的数据:"+map);
 					System.out.println(e);

@@ -26,7 +26,7 @@ public class Mc_dict_operation {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_operation(int match_scheme) throws Exception{
+	public void dict_operation(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,11 +37,19 @@ public class Mc_dict_operation {
 //		sql="delete from mc_dict_operation where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
+		//1609版
+//		sql="insert into mc_dict_operation(premoment_high, searchcode, premoment_low, operationname, is_save, "
+//				+ "typename,  match_scheme, useanti, drugtime, operationcode,createdate) "
+//				+ "values(?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
+		//1712版
 		sql="insert into mc_dict_operation(premoment_high, searchcode, premoment_low, operationname, is_save, "
-				+ "typename, createdate, match_scheme, useanti, drugtime, operationcode) "
-				+ "values(?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'),?,?,?,?)";
+				+ "typename, match_scheme, useanti, drugtime, operationcode, updatedate) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
+			map.put("updatedate", startdate);
 			
 			listbatch.add(map);
 			
@@ -61,6 +69,7 @@ public class Mc_dict_operation {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				try{
 					pst.setString(1,strisnull.isnull(map.get("premoment_high")).toString());//premoment_high
 					pst.setString(2,strisnull.isnull(map.get("searchcode")).toString());//searchcode
@@ -68,11 +77,12 @@ public class Mc_dict_operation {
 					pst.setString(4,strisnull.isnull(map.get("operationname")).toString());//operationname
 					pst.setString(5,strisnull.isnull(map.get("is_save")).toString());//is_save
 					pst.setString(6,strisnull.isnull(map.get("typename")).toString());//typename
-					pst.setString(7,map.get("createdate").toString().substring(0,19));//createdate
-					pst.setString(8,strisnull.isnull(map.get("match_scheme")).toString());//match_scheme
-					pst.setString(9,strisnull.isnull(map.get("useanti")).toString());//useanti
-					pst.setString(10,strisnull.isnull(map.get("drugtime")).toString());//drugtime
-					pst.setString(11,strisnull.isnull(map.get("operationcode")).toString());//operationcode
+					pst.setString(7,strisnull.isnull(map.get("match_scheme")).toString());//match_scheme
+					pst.setString(8,strisnull.isnull(map.get("useanti")).toString());//useanti
+					pst.setString(9,strisnull.isnull(map.get("drugtime")).toString());//drugtime
+					pst.setString(10,strisnull.isnull(map.get("operationcode")).toString());//operationcode
+//					pst.setString(11,map.get("createdate").toString().substring(0,19));//createdate
+					pst.setString(11,strisnull.isnull(startdate));//createdate
 				}catch(Exception e){
 					System.out.println("mc_dict_operation出现异常的数据:"+map);
 					System.out.println(e);

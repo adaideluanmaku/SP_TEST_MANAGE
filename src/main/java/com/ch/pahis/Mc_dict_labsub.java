@@ -26,7 +26,7 @@ public class Mc_dict_labsub {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_labsub(int match_scheme) throws Exception{
+	public void dict_labsub(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,11 +37,18 @@ public class Mc_dict_labsub {
 //		sql="delete from mc_dict_labsub where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
-		sql="insert into mc_dict_labsub( searchcode, itemname, is_save, match_scheme, itemcode, medshow_id, type_id) "
-				+ "values(?,?,?,?,?,?,?)";
+		//1609版
+//		sql="insert into mc_dict_labsub( searchcode, itemname, is_save, match_scheme, itemcode, medshow_id, type_id) "
+//				+ "values(?,?,?,?,?,?,?)";
+		
+		//1712版
+		sql="insert into mc_dict_labsub( searchcode, itemname, is_save, match_scheme, itemcode, medshow_id, type_id,"
+				+ " updatedate) "
+				+ "values(?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
-			
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -60,6 +67,7 @@ public class Mc_dict_labsub {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("itemname")).toString());//itemname
@@ -68,6 +76,7 @@ public class Mc_dict_labsub {
 					pst.setString(5,strisnull.isnull(map.get("itemcode")).toString());//itemcode
 					pst.setString(6,strisnull.isnull(map.get("medshow_id")).toString());//medshow_id
 					pst.setString(7,strisnull.isnull(map.get("type_id")).toString());//type_id
+					pst.setString(8,strisnull.isnull(startdate));//updatedate
 				}catch(Exception e){
 					System.out.println("mc_dict_labsub出现异常的数据:"+map);
 					System.out.println(e);

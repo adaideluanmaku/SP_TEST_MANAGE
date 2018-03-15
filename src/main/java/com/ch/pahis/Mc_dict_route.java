@@ -26,7 +26,7 @@ public class Mc_dict_route {
 	@Autowired
 	Strisnull strisnull;
 	
-	public void dict_route(int match_scheme) throws Exception{
+	public void dict_route(int match_scheme,String startdate) throws Exception{
 		List listbatch=new ArrayList();
 		List list=null;
 		String sql=null;
@@ -37,12 +37,21 @@ public class Mc_dict_route {
 //		sql="delete from mc_dict_route where match_scheme=?";
 //		jdbcTemplate_oracle.update(sql,new Object[]{match_scheme});
 		
-		sql="insert into mc_dict_route(searchcode, match_user, is_save, createdate, match_scheme, routename, "
+		//1609版
+//		sql="insert into mc_dict_route(searchcode, match_user, is_save, match_scheme, routename, "
+//				+ "isskintest, pass_route_name, routecode, route_type, abbrev, pass_routeid, match_time, "
+//				+ " createdate, unable_match_desc, unable_match) values(?,?,?,"
+//				+ " ?,?,?,?,?,?,?,?,?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
+		//1712版
+		sql="insert into mc_dict_route(searchcode, match_user, is_save, match_scheme, routename, "
 				+ "isskintest, pass_route_name, routecode, route_type, abbrev, pass_routeid, match_time, "
-				+ "unable_match_desc, unable_match) values(?,?,?,to_date(?, 'yyyy-mm-dd hh24:mi:ss'),?,?,?,?,?,?,?,?,?,?,?)";
+				+ "unable_match_desc, unable_match,updatedate) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+				+ "to_date(?, 'yyyy-mm-dd hh24:mi:ss'))";
+		
 		for(int i=0;i<list.size();i++){
 			Map map=(Map)list.get(i);
-			
+			map.put("updatedate", startdate);
 			listbatch.add(map);
 			
 			if((i+1)%500==0){
@@ -61,22 +70,24 @@ public class Mc_dict_route {
 		BatchPreparedStatementSetter setter = new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement pst, int i) throws SQLException {
 				Map map=(Map)listbatch.get(i);
+				String startdate=map.get("updatedate").toString();
 				try{
 					pst.setString(1,strisnull.isnull(map.get("searchcode")).toString());//searchcode
 					pst.setString(2,strisnull.isnull(map.get("match_user")).toString());//match_user
 					pst.setString(3,strisnull.isnull(map.get("is_save")).toString());//is_save
-					pst.setString(4,map.get("createdate").toString().substring(0,19));//createdate
-					pst.setString(5,strisnull.isnull(map.get("match_scheme")).toString());//match_scheme
-					pst.setString(6,strisnull.isnull(map.get("routename")).toString());//routename
-					pst.setString(7,strisnull.isnull(map.get("isskintest")).toString());//isskintest
-					pst.setString(8,strisnull.isnull(map.get("pass_route_name")).toString());//pass_route_name
-					pst.setString(9,strisnull.isnull(map.get("routecode")).toString());//routecode
-					pst.setString(10,strisnull.isnull(map.get("route_type")).toString());//route_type
-					pst.setString(11,strisnull.isnull(map.get("abbrev")).toString());//abbrev
-					pst.setString(12,strisnull.isnull(map.get("pass_routeid")).toString());//pass_routeid
-					pst.setString(13,strisnull.isnull(map.get("match_time")).toString());//match_time
-					pst.setString(14,strisnull.isnull(map.get("unable_match_desc")).toString());//unable_match_desc
-					pst.setString(15,strisnull.isnull(map.get("unable_match")).toString());//unable_match
+					pst.setString(4,strisnull.isnull(map.get("match_scheme")).toString());//match_scheme
+					pst.setString(5,strisnull.isnull(map.get("routename")).toString());//routename
+					pst.setString(6,strisnull.isnull(map.get("isskintest")).toString());//isskintest
+					pst.setString(7,strisnull.isnull(map.get("pass_route_name")).toString());//pass_route_name
+					pst.setString(8,strisnull.isnull(map.get("routecode")).toString());//routecode
+					pst.setString(9,strisnull.isnull(map.get("route_type")).toString());//route_type
+					pst.setString(10,strisnull.isnull(map.get("abbrev")).toString());//abbrev
+					pst.setString(11,strisnull.isnull(map.get("pass_routeid")).toString());//pass_routeid
+					pst.setString(12,strisnull.isnull(map.get("match_time")).toString());//match_time
+					pst.setString(13,strisnull.isnull(map.get("unable_match_desc")).toString());//unable_match_desc
+					pst.setString(14,strisnull.isnull(map.get("unable_match")).toString());//unable_match
+//					pst.setString(15,map.get("createdate").toString().substring(0,19));//createdate
+					pst.setString(15,strisnull.isnull(startdate));//createdate
 				}catch(Exception e){
 					System.out.println("mc_dict_route出现异常的数据:"+map);
 					System.out.println(e);
