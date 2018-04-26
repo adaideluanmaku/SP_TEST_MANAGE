@@ -299,6 +299,19 @@
 		<table>
 			<tr>
 				<td style="text-align: left;">
+					<div >脚本状态 : </div>
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: left;">
+					<select id="scriptstatus" class="easyui-combobox" name="scriptstatus" style="width:200px;">   
+					    <option value="0">停用</option>   
+					    <option value="1">启用</option>
+					</select>  
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: left;">
 					<div >案例编号 : </div>
 				</td>
 			</tr>

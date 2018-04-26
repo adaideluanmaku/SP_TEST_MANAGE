@@ -115,7 +115,7 @@ public class Selenium {
 		jdbcTemplate.update(sql, new Object[] { testid });
 
 		// 获取案例脚本
-		sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=? order by a.step asc";
+		sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=? and a.scriptstatus=1 order by a.step asc";
 		list = jdbcTemplate.queryForList(sql, new Object[] { testid });
 		if (list.size() == 0) {
 			sql = "update testmng set testresult=? where testid=?";
@@ -147,8 +147,8 @@ public class Selenium {
 				}
 				if (!"".equals(result1)) {
 					result = result1;
-					if (result.contains("存在BUG") && status == 0) {
-						status = 1;
+					if (result.contains("存在BUG")) {
+//						status = 1;
 						errstatus = 1;
 						// result=result1;
 						// break;
@@ -159,6 +159,7 @@ public class Selenium {
 			result = "selenium脚本第" + scriptmap.get("step") + "步，测试异常失败";
 			System.out.println(result);
 			System.out.println(e);
+			driver.quit();
 		}
 		// 客户端从这里结束复制代码
 
@@ -230,7 +231,7 @@ public class Selenium {
 			result = "";
 
 			// 获取案例脚本
-			sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=?  order by a.step asc";
+			sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=? and a.scriptstatus=1 order by a.step asc";
 			list = jdbcTemplate.queryForList(sql, new Object[] { testmap.get("testid") });
 			if (list.size() == 0) {
 				sql = "update testmng set testresult=? where testid=?";
@@ -242,8 +243,13 @@ public class Selenium {
 			try {
 				// 循环脚本
 				int testid = 0;
+				int errstatus = 0;// 是否已经存在BUG
 				for (int i = 0; i < list.size(); i++) {
 					scriptmap = (Map) list.get(i);
+					if (errstatus == 1 && (Integer.parseInt(scriptmap.get("scripttype").toString()) != 100
+							&& Integer.parseInt(scriptmap.get("scripttype").toString()) != 102)) {
+						continue;
+					}
 					System.out.println("开始执行selenium脚本第" + scriptmap.get("step") + "步");
 
 					// 每个脚本的公共方法
@@ -273,12 +279,22 @@ public class Selenium {
 							// }
 						}
 					} else {
-						result1 = selenium_obj(driver, scriptmap, 1);
+						if((j+1)==listgroup.size()){
+							result1 = selenium_obj(driver, scriptmap, 0);
+						}else{
+							result1 = selenium_obj(driver, scriptmap, 1);
+						}
+						
 					}
 					if (!"".equals(result1)) {
 						result = result1;
 						if (result.contains("存在BUG")) {
-							break;
+							errstatus=1;
+//							if((j+1)==listgroup.size()){
+//								driver.quit();
+//							}else{
+//								break;
+//							}
 						}
 					}
 				}
@@ -286,6 +302,7 @@ public class Selenium {
 				result = "selenium脚本第" + scriptmap.get("step") + "步，测试异常失败";
 				System.out.println(result);
 				System.out.println(e);
+				driver.quit();
 			}
 			// 客户端从这里结束复制代码
 
@@ -311,7 +328,7 @@ public class Selenium {
 		for (int i1 = 0; i1 < selenium_share.size(); i1++) {
 			JSONObject share_json = selenium_share.getJSONObject(i1);
 			// 获取案例脚本
-			sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=? order by a.step asc";
+			sql = "select a.*,b.testno,b.testname from script a, testmng b where a.testid=b.testid and a.testid=? and a.scriptstatus=1 order by a.step asc";
 			share_list = jdbcTemplate.queryForList(sql, new Object[] { share_json.getString("testid") });
 			if (share_list.size() == 0) {
 				// sql="update testmng set testresult=? where testid=?";
@@ -411,11 +428,11 @@ public class Selenium {
 			driver.findElement(By.xpath(scriptmap.get("xpath").toString())).click();
 		}
 
-		// 是否为页面源码比较(还在完善，源码的排列可能不同导致对比失败)
+		// 是否为页面源码比较(获取页面html，如果页面中包含iframe，那么iframe里面的页面也要单独比较)
 		if (Integer.parseInt(scriptmap.get("scripttype").toString()) == 89) {
 			// 读取HTML-A源码
 			Document doc = Jsoup.parse(scriptmap.get("testvalue").toString());
-			writeToFile(doc.toString(), "doc");
+//			writeToFile(doc.toString(), "doc");//人工查看文本
 			Elements allele = doc.body().children().select("*");
 			// for(Element el:allele){
 			// System.out.println(el.ownText());
@@ -425,62 +442,35 @@ public class Selenium {
 			WebElement webElement = driver.findElement(By.xpath("/html"));
 			System.out.println(webElement.getAttribute("HTML"));
 			Document doc1 = Jsoup.parse(webElement.getAttribute("outerHTML"));
-			writeToFile(doc1.toString(), "doc1");
+//			writeToFile(doc1.toString(), "doc1");//人工查看文本
 			Elements allele1 = doc1.body().children().select("*");
 			// for(Element el:allele1){
 			// System.out.println(el.ownText());
 			// }
 
 			int count = 0;
-			if (allele.size() == allele1.size() || count == 0) {
-				for (int i = 0; i < allele.size(); i++) {
-					Element el = allele.get(i);
-					Element el1 = allele1.get(i);
-					if (!el.ownText().equals(el1.ownText())) {
-						System.out.println(el.ownText());
-						System.out.println(el1.ownText());
-						break;
-					} else {
-						count++;
-					}
+			for (int i = 0; i < allele.size(); i++) {
+				Element el = allele.get(i);
+				Element el1 = allele1.get(i);
+//				System.out.println(el.ownText());
+//				System.out.println(el1.ownText());
+				if (el.ownText().equals(el1.ownText())) {
+					allele.remove(i);
+					allele1.remove(i);
+					i=i-1;
+//					break;
+				} else {
+					count++;
+					break;//如果有一个错误，就没必要测试下去了
 				}
 			}
 
-			// WebElement webElement = driver.findElement(By.xpath("/html"));
-			// System.out.println(webElement.getAttribute("outerHTML"));
-			// String[] docstr1 =
-			// webElement.getAttribute("outerHTML").split("\n");
-
-			// int count=0;
-			// if(docstr.length==docstr1.length || count==0){
-			// for(int i=0;i<docstr.length;i++){
-			// String str = docstr[i].trim();
-			// String str1 = docstr1[i].trim();
-			//
-			// if(!str.equals(str1)){
-			//// System.out.println(doc.);//http://www.cnblogs.com/chenying99/archive/2013/01/04/2844615.html
-			// System.out.println("第"+(i+1)+"行出现问题：");
-			// System.out.println(str);
-			// System.out.println(str1);
-			// if(!formatHTML(str,str1)){
-			// break;
-			// }else{
-			// count++;
-			// }
-			// }else{
-			// count++;
-			// }
-			// }
-			// }
-
-			if (allele.size() == count) {
+			if (count==0) {
 				result = "测试通过";
-				System.out
-						.println("测试案例：" + scriptmap.get("testname") + "||" + scriptmap.get("testno") + "||" + result);
+				System.out.println("测试案例：" + scriptmap.get("testname") + "||" + scriptmap.get("testno") + "||" + result);
 			} else {
 				result = "存在BUG(步：" + scriptmap.get("step") + ")";
-				System.out
-						.println("测试案例：" + scriptmap.get("testname") + "||" + scriptmap.get("testno") + "||" + result);
+				System.out.println("测试案例：" + scriptmap.get("testname") + "||" + scriptmap.get("testno") + "||" + result);
 			}
 		}
 

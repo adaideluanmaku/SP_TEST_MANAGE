@@ -323,6 +323,23 @@ public class Pabean {
 		List errlist=new ArrayList();
 		String errstr="";
 		String result="";
+		
+		if(json_java1.equals(json_win1)){
+			return result;
+		}
+		
+		if("[]".equals(json_java1) && !"[]".equals(json_win1)){
+			result=result+"<div style='color:red'>断言：-->"+json_win1+"</div><br>"
+					+"<div style='color:blue'>响应：缺少断言对应的结果</div><br>";
+			return result;
+		}
+		
+		if("[]".equals(json_win1) && !"[]".equals(json_java1)){
+			result=result+"<div style='color:red'>断言：不存在该结果</div><br>"
+					+"<div style='color:blue'>响应：-->"+json_java1+"</div><br>";
+			return result;
+		}
+		
 		try{
 			JSONArray json_wins =JSONArray.fromObject(json_win1);
 			JSONArray json_javas =JSONArray.fromObject(json_java1);

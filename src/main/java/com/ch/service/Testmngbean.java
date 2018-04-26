@@ -594,7 +594,7 @@ public class Testmngbean {
 		sql="delete from testmng where testid=?";
 		jdbcTemplate.update(sql,new Object[]{testid});
 		
-		sql="delete from files a , script b where a.linkid=b.scriptid and a.linktype=2 and b.testid=?";
+		sql="delete a from files a , script b where a.linkid=b.scriptid and a.linktype=2 and b.testid=?";
 		jdbcTemplate.update(sql,new Object[]{testid});
 		
 		sql="delete from script where testid=?";
@@ -741,6 +741,7 @@ public class Testmngbean {
 		int step=0;
 		int testid=0;
 		String testurl="";
+		int scriptstatus=0;
 		if(StringUtils.isBlank(req.getParameter("testno"))){
 			return "案例编号不能为空";
 		}else{
@@ -752,6 +753,10 @@ public class Testmngbean {
 		if(StringUtils.isNotBlank(req.getParameter("testvalue"))){
 			testvalue=req.getParameter("testvalue");
 		}
+		if(StringUtils.isNotBlank(req.getParameter("scriptstatus"))){
+			scriptstatus=Integer.parseInt(req.getParameter("scriptstatus"));
+		}
+		
 		if(StringUtils.isNotBlank(req.getParameter("scripttype"))){
 			try{
 				scripttype=Integer.parseInt(req.getParameter("scripttype"));
@@ -790,8 +795,8 @@ public class Testmngbean {
 			jdbcTemplate.update(sql,new Object[]{testid,step} );
 		}
 		
-		sql="insert into script(xpath,testvalue,scripttype,scriptname,step,testid,testurl) values(?,?,?,?,?,?,?)";
-		jdbcTemplate.update(sql,new Object[]{xpath,testvalue,scripttype,scriptname,step,testid,testurl} );
+		sql="insert into script(xpath,testvalue,scripttype,scriptname,step,testid,testurl,scriptstatus) values(?,?,?,?,?,?,?,?)";
+		jdbcTemplate.update(sql,new Object[]{xpath,testvalue,scripttype,scriptname,step,testid,testurl,scriptstatus} );
 		
 		return "ok";
 	}
@@ -823,10 +828,10 @@ public class Testmngbean {
 			}
 		}
 		
-		sql="update script set xpath=?,testvalue=?,scripttype=?,scriptname=?,step=?,testurl=? where scriptid=?";
+		sql="update script set xpath=?,testvalue=?,scripttype=?,scriptname=?,step=?,testurl=?,scriptstatus=? where scriptid=?";
 		jdbcTemplate.update(sql,new Object[]{req.getParameter("xpath"),req.getParameter("testvalue"),
 				req.getParameter("scripttype"),req.getParameter("scriptname"),
-				req.getParameter("step"),req.getParameter("testurl"),scriptid});
+				req.getParameter("step"),req.getParameter("testurl"),req.getParameter("scriptstatus"),scriptid});
 		
 		return "ok";
 	}

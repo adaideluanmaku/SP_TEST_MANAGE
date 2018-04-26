@@ -447,6 +447,7 @@ $(document).ready(function(){
 		if($('#mm_selenium #script_').val()==''){
 			return;
 		}
+		$('#script_dialog_1 #scriptstatus').combobox('setValue',0);
 		$('#script_dialog_1 #ComboBox_right').combobox('setValue',0);
 		$("#script_dialog_1 #step").textbox('setValue','');
 		$("#script_dialog_1 #scriptname").textbox('setValue','');
@@ -1520,7 +1521,7 @@ function testmng(){
 	    sortName:"testno",//允许排序字段
 	    toolbar:'#button_3',//工具栏设置
 	    columns:[[  
-	        {field:'testid',hidden:true},
+	        {field:'testid',title:'案例序号'},
 	        {field:'projectname',title:'项目名称',width:100,halign:'center'},
 			{field:'testresult',title:'测试结果',width:80,halign:'center',
 	        	formatter: function(value,row,index){
@@ -1695,12 +1696,22 @@ function script(){
 	    queryParams: {testid:$('#mm_selenium #script_').val(),scriptname:$('#script_dialog #search_data').textbox('getValue')},//生成表格时，额外的查询条件
 	    columns:[[  
 	        {field:'scriptid',hidden:true},
-	        {field:'testno',title:'案例编号',width:100,halign:'center'},
+	        {field:'scriptstatus',title:'状态',width:100,halign:'center',
+	        	formatter: function(value,row,index){
+					if(value == 0){
+						return "停用";
+					}else{
+						return "启用";
+					}
+//					var tooltil1=tooltil(value,10);
+//                    return tooltil1;
+				}	
+	        },
 	        {field:'scriptname',title:'脚本名称',width:100,halign:'center'},
 			{field:'xpath',title:'页面定位',width:150,halign:'center'},
 			{field:'testvalue',title:'输入值',width:120,halign:'center',
 				formatter: function(value,row,index){
-					if(value.length>100){
+					if(value.length>200){
 						return "页面源代码";
 					}else{
 						var tooltil1=tooltil(value,10);
@@ -1779,7 +1790,8 @@ function script(){
 //					}
 //				}
 //			},
-			{field:'testurl',title:'测试地址',width:300,halign:'center'}
+			{field:'testurl',title:'测试地址',width:300,halign:'center'},
+			{field:'testno',title:'案例编号',width:100,halign:'center'},
 	    ]],
 	    
 	    //双击获取行数据
@@ -1794,6 +1806,7 @@ function script(){
 //	    	}else{
 //	    		$("#script_dialog_1 #alltest_status").combobox('setValue',row.alltest_status);
 //	    	}
+	    	$("#script_dialog_1 #scriptstatus").combobox('setValue',row.scriptstatus);
 	    	$('#script_dialog_1 #scriptid').val(row.scriptid);
 	    	$('#script_dialog_1 #testno').textbox('setValue', row.testno);
 	    	$("#script_dialog_1 #step").textbox('setValue',row.step);
