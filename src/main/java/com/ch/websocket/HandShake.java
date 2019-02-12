@@ -45,6 +45,6 @@ public class HandShake implements HandshakeInterceptor {
 
 	//握手后的动作，
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-		
+		System.out.println("握手后的动作");
 	}
 }

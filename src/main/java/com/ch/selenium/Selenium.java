@@ -440,7 +440,7 @@ public class Selenium {
 
 			// 读取HTML-B源码
 			WebElement webElement = driver.findElement(By.xpath("/html"));
-			System.out.println(webElement.getAttribute("HTML"));
+//			System.out.println(webElement.getAttribute("HTML"));
 			Document doc1 = Jsoup.parse(webElement.getAttribute("outerHTML"));
 //			writeToFile(doc1.toString(), "doc1");//人工查看文本
 			Elements allele1 = doc1.body().children().select("*");
@@ -449,19 +449,23 @@ public class Selenium {
 			// }
 
 			int count = 0;
-			for (int i = 0; i < allele.size(); i++) {
-				Element el = allele.get(i);
-				Element el1 = allele1.get(i);
-//				System.out.println(el.ownText());
-//				System.out.println(el1.ownText());
-				if (el.ownText().equals(el1.ownText())) {
-					allele.remove(i);
-					allele1.remove(i);
-					i=i-1;
-//					break;
-				} else {
-					count++;
-					break;//如果有一个错误，就没必要测试下去了
+			if((allele.size()==0 && allele1.size()>0) || (allele.size()>0 && allele1.size()==0)){
+				count=-1;
+			}else{
+				for (int i = 0; i < allele.size(); i++) {
+					Element el = allele.get(i);
+					Element el1 = allele1.get(i);
+//					System.out.println(el.ownText());
+//					System.out.println(el1.ownText());
+					if (el.ownText().equals(el1.ownText())) {
+						allele.remove(i);
+						allele1.remove(i);
+						i=i-1;
+//						break;
+					} else {
+						count++;
+						break;//如果有一个错误，就没必要测试下去了
+					}
 				}
 			}
 

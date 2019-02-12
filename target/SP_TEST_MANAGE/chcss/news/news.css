@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+html, body{ 
+	margin:0 auto; 
+	height:100%; 
+	width:100%; 
+	background-color: #eeeeee;
+	/*
+	background-image:url(../chimage/login.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	*/
+}
+
+.doc{
+	width:1200px;
+	height:100%;
+	overflow: auto;
+}
+
+/* ============== */
+.box_1{
+	min-height:100%;
+	width:100px;
+	background-color: #ffffff;
+	position: fixed;
+	
+}
+
+.box_1 div{
+	height:40px;
+	width:100px;
+	margin-top:10px;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.box_1 div:hover{
+	background-color: slategray;
+	cursor: pointer;
+}
+
+/* ============== */
+
+.box_2{
+	min-height:100%;
+	width:1090px;
+	/*float: right;*/
+	margin-left:110px;
+	overflow-y:scroll;
+	background-color: #ffffff;
+	
+}
+
+.box_2 div{
+	min-height:100px;
+	width:95%;
+	margin-left: 10px;
+	
+	/*div内容换行
+	ord-wrap:break-word; 
+	word-break:break-all;*/
+}
+
+.box_2 div:hover{
+	background-color: #eeeeee;
+}
+
+.box_2 div h3{
+	margin-top: 0px;
+	background-color: #c6e5ef;
+}
+
+.box_2 div p{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	
+	/*div内容换行*/
+	white-space:normal;
+}

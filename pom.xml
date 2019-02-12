@@ -473,7 +473,7 @@
 					<scanIntervalSeconds>2</scanIntervalSeconds>
 					<connectors>
 						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-							<port>8099</port>
+							<port>8098</port>
 						</connector>
 					</connectors>
 					<contextPath>/SP_TEST_MANAGE</contextPath>
@@ -490,7 +490,7 @@
 				 	<!--<path>/wp</path> 可配置访问路径 -->
 					<path>/SP_TEST_MANAGE</path>
 					<uriEncoding>UTF-8</uriEncoding>
-					<port>8099</port>
+					<port>8098</port>
 				</configuration>
 			</plugin>
 

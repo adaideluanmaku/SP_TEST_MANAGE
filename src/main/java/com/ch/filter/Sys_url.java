@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.ch.sysuntils.Strisnull;
+
 @Service
 public class Sys_url {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+	@Autowired
+	Strisnull strisnull;
 	
 	public boolean user_url(HttpServletRequest req){
 		String sql=null;
@@ -26,7 +30,7 @@ public class Sys_url {
 		}
 		
 		//反向控制，权限未被限制
-		if(StringUtils.isBlank(usermng.get("urlid").toString())){
+		if(StringUtils.isBlank(strisnull.isnull(usermng.get("urlid")))){
 			return true;
 		}
 		

@@ -204,8 +204,11 @@ public class ImageTestDemo {
 		String image1;
 		String image2;
 		try {
-			image1 = p.getHash(new FileInputStream(new File("E:/ch.jpg")));
-			image2 = p.getHash(new FileInputStream(new File("E:/test.jpg")));
+			image1 = p.getHash(new FileInputStream(new File("D:/jmeterImage/2.jpeg")));
+			image2 = p.getHash(new FileInputStream(new File("D:/jmeterImage/3.jpeg")));
+			System.out.println(image1);
+			System.out.println(image2);
+			
 			System.out.println("1:1 Score is " + p.distance(image1, image2)+" 。汉明距离越大表明图片差异越大，0<x<5不同但相似，>5明显不同");
 
 		} catch (FileNotFoundException e) {

@@ -311,7 +311,6 @@ $(document).ready(function(){
 
 //向后台发送消息给某个用户
 function sendMsg(){
-	var addurl=$("#addurl").val();
 	var userid=Number($("#userid").val());
 	if(userid==-1){
 		location.href=path;
@@ -319,28 +318,56 @@ function sendMsg(){
 	var loginname=$("#loginname").val();
 	var touid=$('#websocket-div #touid').val();
 	var msg=$("#websocket-div #usermsg").textbox('getValue');
-	
 	if(getByteLen(msg)==0){
 		return;
 	}
-	$.ajax({
-		type:"POST",
-		url:addurl+"/websocket/touser",
-		async:true,
-		cache:true,
-		data:{userid:userid,fromName:loginname,touid:touid,text:msg},
-		success: function(result){
-			$("#websocket-div #content").append('<label style="color: #a5c35a;">我&nbsp;'+new Date().Format("yyyy-MM-dd hh:mm:ss")+'</label><div class="msgtype">'+msg+'</div>');
-			$("#websocket-div #usermsg").textbox('setValue','');
-			
-			//聊天记录布局处理后,在布局完成后再来调整滚动条
-			scrollToBottom();
-		},
-		error:function(XMLResponse){
-			alert(XMLResponse.responseText)
-		}
-	});
-	return false;
+		
+	var data={};
+	data["uid"]=userid;
+	data["fromName"]=loginname;
+	data["touid"]=touid;
+	data["text"]=msg;
+	console.log(JSON.stringify(data))
+	
+	//websocket连接通道发送消息
+	websocket.send(JSON.stringify(data));
+	
+	$("#websocket-div #content").append('<label style="color: #a5c35a;">我&nbsp;'+new Date().Format("yyyy-MM-dd hh:mm:ss")+'</label><div class="msgtype">'+msg+'</div>');
+	$("#websocket-div #usermsg").textbox('setValue','');
+	
+	//聊天记录布局处理后,在布局完成后再来调整滚动条
+	scrollToBottom();
+	
+//	var addurl=$("#addurl").val();
+//	var userid=Number($("#userid").val());
+//	if(userid==-1){
+//		location.href=path;
+//	}
+//	var loginname=$("#loginname").val();
+//	var touid=$('#websocket-div #touid').val();
+//	var msg=$("#websocket-div #usermsg").textbox('getValue');
+//	
+//	if(getByteLen(msg)==0){
+//		return;
+//	}
+//	$.ajax({
+//		type:"POST",
+//		url:addurl+"/websocket/touser",
+//		async:true,
+//		cache:true,
+//		data:{userid:userid,fromName:loginname,touid:touid,text:msg},
+//		success: function(result){
+//			$("#websocket-div #content").append('<label style="color: #a5c35a;">我&nbsp;'+new Date().Format("yyyy-MM-dd hh:mm:ss")+'</label><div class="msgtype">'+msg+'</div>');
+//			$("#websocket-div #usermsg").textbox('setValue','');
+//			
+//			//聊天记录布局处理后,在布局完成后再来调整滚动条
+//			scrollToBottom();
+//		},
+//		error:function(XMLResponse){
+//			alert(XMLResponse.responseText)
+//		}
+//	});
+//	return false;
 }
 
 //向后台发送消息给全部用户

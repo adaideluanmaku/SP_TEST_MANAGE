@@ -44,6 +44,7 @@ import com.ch.selenium.Selenium;
 import com.ch.service.Pabean;
 import com.ch.service.SocketBean;
 import com.ch.service.Testmngbean;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -519,7 +520,6 @@ public class TestmngAction {
 		
 		//返回MAP时，JS无法解析base64编码成图片，所以MAP里面的文件不能用base64编码
 		map=testmngbean.scriptreadfile(req);
-		
 		//单独返回文件时，JS可以解析base64编码成图片
 //			file=Base64.encodeBase64((byte[]) map.get("learnfile"));
 		

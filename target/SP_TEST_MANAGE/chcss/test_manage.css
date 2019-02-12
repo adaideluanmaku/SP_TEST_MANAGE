@@ -1,0 +1,80 @@
+@CHARSET "UTF-8";
+html, body{ 
+	margin:0 auto; 
+	height:100%; 
+	width:100%; 
+	background-color:#eeeeee;
+	/*
+	background-image:url(../chimage/login.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	*/
+}
+
+.doc{
+	width:1200px;
+	height:100%;
+	margin:0 auto;
+}
+
+/*标题栏*/
+.hd{
+	width:100%;
+	height:40px;
+	background-color: #0d47a1;/* #2a3542 */
+}
+
+.hd div{
+	color: #ffffff;
+}
+/*===============*/
+.menus1{
+	width:600px;
+	height:40px;
+	float: left;
+}
+
+.menus1 div{
+	width:70px;
+	line-height:40px;
+	text-align: center;
+	float: left;
+	/*border-bottom:4px solid #FF0099;*/  /*底部着色*/
+	cursor: pointer;
+}
+
+.menus1 a{
+	text-decoration:none;/*没有底线*/
+	display:block;/*扩大作用于至DIV*/
+}
+/*===============*/
+.menus2{
+	width:400px;
+	height:40px;
+	float: right;
+}
+
+.menus2 div{
+	width:100px;
+	line-height:40px;
+	text-align: center;
+	float: left;
+	cursor: pointer;
+}
+
+.menus2 a{
+	text-decoration:none;
+	display:block
+}
+/*===============*/
+.bd{
+	width:1200px;
+	float: left;
+	padding-top: 10px;
+	
+}
+
+.iframe_box{
+	width:100%;
+	height:700px;
+}

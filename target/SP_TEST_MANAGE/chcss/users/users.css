@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+html, body{ 
+	margin:0 auto; 
+	height:100%; 
+	width:100%; 
+	background-color:#eeeeee;
+	/*
+	background-image:url(../chimage/login.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	*/
+}
+
+.doc{
+	width:1200px;
+	height:100%;
+	overflow: auto;
+}
+
+/* ============== */
+.box_1{
+	min-height:100%;
+	width:100px;
+	background-color: #ffffff;
+	position: fixed;
+}
+
+.box_1 div{
+	height:40px;
+	width:100px;
+	margin-top:10px;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.box_1 div:hover{
+	background-color: slategray;
+	cursor: pointer;
+}
+
+.box_2{
+	height:700px;
+	width:1090px;
+	float: left;
+	margin-left: 110px;
+	overflow: hidden;
+	background-color: #ffffff;
+}
+
+.search{
+	height:30px;
+	width:1090px;
+	float: left;
+	padding-top: 5px;
+	background-color: #c6e5ef;
+	/* border: 1px #101627 solid;  */
+}

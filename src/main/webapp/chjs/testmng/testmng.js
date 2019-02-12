@@ -491,10 +491,10 @@ $(document).ready(function(){
 		        "scriptname":"点击"   
 	    },{    
 	    	 "scripttype":89,    
-		        "scriptname":"断言-全等(页面源代码)"   
+		        "scriptname":"断言-全等(全页面源代码)"   
 	    },{    
 	    	 "scripttype":90,    
-		        "scriptname":"断言-全等(图片)"   
+		        "scriptname":"断言-全等(全页面图片)"   
 	    },{    
 	    	 "scripttype":98,    
 		        "scriptname":"断言-全等"   
